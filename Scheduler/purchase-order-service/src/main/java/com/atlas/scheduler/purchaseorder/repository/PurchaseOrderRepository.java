@@ -1,4 +1,4 @@
-package com.atlas.scheduler.repository;
+package com.atlas.scheduler.purchaseorder.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;

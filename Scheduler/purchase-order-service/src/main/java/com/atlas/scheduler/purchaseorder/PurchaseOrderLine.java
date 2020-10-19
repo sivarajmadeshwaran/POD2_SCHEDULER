@@ -1,4 +1,4 @@
-package com.atlas.scheduler.model;
+package com.atlas.scheduler.purchaseorder;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

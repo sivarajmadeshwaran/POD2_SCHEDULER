@@ -1,4 +1,4 @@
-package com.atlas.scheduler.service;
+package com.atlas.scheduler.purchaseorder.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.atlas.scheduler.entity.PurchaseOrderLinePK;
-import com.atlas.scheduler.model.PurchaseOrder;
-import com.atlas.scheduler.model.PurchaseOrderLine;
-import com.atlas.scheduler.repository.PurchaseOrderRepository;
+import com.atlas.scheduler.purchaseorder.PurchaseOrder;
+import com.atlas.scheduler.purchaseorder.PurchaseOrderLine;
+import com.atlas.scheduler.purchaseorder.repository.PurchaseOrderRepository;
 
 @Service
 public class PurchaseOrderServiceImpl implements IPurchaseOrderService {

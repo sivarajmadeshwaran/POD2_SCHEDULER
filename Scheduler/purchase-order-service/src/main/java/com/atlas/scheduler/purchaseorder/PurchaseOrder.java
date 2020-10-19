@@ -1,4 +1,4 @@
-package com.atlas.scheduler.model;
+package com.atlas.scheduler.purchaseorder;
 
 import java.util.Date;
 import java.util.List;

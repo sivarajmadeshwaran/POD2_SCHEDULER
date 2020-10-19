@@ -1,4 +1,4 @@
-package com.atlas.scheduler.integeration;
+package com.atlas.scheduler.purchaseorder.infrastructure;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 
-import com.atlas.scheduler.model.PurchaseOrder;
+import com.atlas.scheduler.purchaseorder.PurchaseOrder;
 
 @Configuration
 @EnableKafka

@@ -1,11 +1,11 @@
-package com.atlas.scheduler.integeration;
+package com.atlas.scheduler.purchaseorder.infrastructure;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import com.atlas.scheduler.model.PurchaseOrder;
-import com.atlas.scheduler.service.IPurchaseOrderService;
+import com.atlas.scheduler.purchaseorder.PurchaseOrder;
+import com.atlas.scheduler.purchaseorder.service.IPurchaseOrderService;
 
 import lombok.extern.slf4j.Slf4j;
 

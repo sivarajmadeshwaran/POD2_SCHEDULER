@@ -1,4 +1,4 @@
-package com.atlas.scheduler.controller;
+package com.atlas.scheduler.purchaseorder.api;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.atlas.scheduler.model.PurchaseOrder;
-import com.atlas.scheduler.service.IPurchaseOrderService;
+import com.atlas.scheduler.purchaseorder.PurchaseOrder;
+import com.atlas.scheduler.purchaseorder.service.IPurchaseOrderService;
 
 
 @RestController

@@ -1,11 +1,11 @@
-package com.atlas.scheduler.integeration;
+package com.atlas.scheduler.purchaseorder.infrastructure;
 
 import java.io.IOException;
 
 import org.apache.kafka.common.serialization.Deserializer;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.atlas.scheduler.model.PurchaseOrder;
+import com.atlas.scheduler.purchaseorder.PurchaseOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
