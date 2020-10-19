@@ -1,4 +1,4 @@
-package com.atlas.scheduler.entity;
+package com.atlas.scheduler.purchaseorder.repository;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

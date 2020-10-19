@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.atlas.scheduler.entity.PurchaseOrderLinePK;
 import com.atlas.scheduler.purchaseorder.PurchaseOrder;
 import com.atlas.scheduler.purchaseorder.PurchaseOrderLine;
+import com.atlas.scheduler.purchaseorder.repository.PurchaseOrderLinePK;
 import com.atlas.scheduler.purchaseorder.repository.PurchaseOrderRepository;
 
 @Service
@@ -20,7 +20,7 @@ public class PurchaseOrderServiceImpl implements IPurchaseOrderService {
 
 	@Override
 	public void createPurchaseOrder(PurchaseOrder order) {
-		com.atlas.scheduler.entity.PurchaseOrder po = new com.atlas.scheduler.entity.PurchaseOrder();
+		com.atlas.scheduler.purchaseorder.repository.PurchaseOrder po = new com.atlas.scheduler.purchaseorder.repository.PurchaseOrder();
 		po.setPoNbr(order.getPoNbr());
 		po.setAddress(order.getAddress());
 		po.setVendor(order.getVendorNbr());
@@ -30,8 +30,8 @@ public class PurchaseOrderServiceImpl implements IPurchaseOrderService {
 
 		List<PurchaseOrderLine> lines = order.getPoLine();
 
-		List<com.atlas.scheduler.entity.PurchaseOrderLine> linesEntity = lines.stream().map(ord -> {
-			com.atlas.scheduler.entity.PurchaseOrderLine line = new com.atlas.scheduler.entity.PurchaseOrderLine();
+		List<com.atlas.scheduler.purchaseorder.repository.PurchaseOrderLine> linesEntity = lines.stream().map(ord -> {
+			com.atlas.scheduler.purchaseorder.repository.PurchaseOrderLine line = new com.atlas.scheduler.purchaseorder.repository.PurchaseOrderLine();
 			PurchaseOrderLinePK id = new PurchaseOrderLinePK();
 			id.setPoLineNbr(ord.getPoLineNbr());
 			id.setPoNbr(order.getPoNbr());
@@ -51,7 +51,7 @@ public class PurchaseOrderServiceImpl implements IPurchaseOrderService {
 
 	@Override
 	public List<PurchaseOrder> getPoDetailsByNbrs(List<Integer> orders) {
-		List<com.atlas.scheduler.entity.PurchaseOrder> poOrders=purchaseOrderRepo.findAllById(orders);
+		List<com.atlas.scheduler.purchaseorder.repository.PurchaseOrder> poOrders=purchaseOrderRepo.findAllById(orders);
 		List<PurchaseOrder> purchaseOrders=poOrders.stream().map(order -> {
 			PurchaseOrder ord=new  PurchaseOrder();
 			if(order!=null) {			
