@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.scheduler.appointment.Dto.AppointmentDto;
+import com.scheduler.appointment.exception.BusinessException;
 import com.scheduler.appointment.service.AppointmentService;
 
 @RestController
@@ -25,7 +26,7 @@ public class AppointmentController {
 	AppointmentService appointmentService;
 
 	@PostMapping(path = "/createAppointment",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> createAppointment(@RequestBody AppointmentDto appointmentDto) {
+	public ResponseEntity<Object> createAppointment(@RequestBody AppointmentDto appointmentDto) throws BusinessException {
 		  return ResponseEntity.status(HttpStatus.CREATED).body(appointmentService.createAppointment(appointmentDto));
 	}
 	
