@@ -1,5 +1,8 @@
 package com.scheduler.appointment.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.scheduler.appointment.Dto.AppointmentDto;
+import com.scheduler.appointment.Dto.PurchaseOrderDto;
+import com.scheduler.appointment.entity.PurchaseOrderFeign;
 import com.scheduler.appointment.exception.BusinessException;
 import com.scheduler.appointment.service.AppointmentService;
 
@@ -24,9 +29,17 @@ public class AppointmentController {
 	
 	@Autowired
 	AppointmentService appointmentService;
+	
+//	@Autowired
+//	PurchaseOrderFeign purchaseOrderFeign;
 
 	@PostMapping(path = "/createAppointment",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> createAppointment(@RequestBody AppointmentDto appointmentDto) throws BusinessException {
+		List<Integer> poList=new ArrayList<>() ;
+//		for(PurchaseOrderDto pos:appointmentDto.getPos()) {
+//			poList.add(pos.getPoNbr());
+//		}
+//		purchaseOrderFeign.getPo(poList);
 		  return ResponseEntity.status(HttpStatus.CREATED).body(appointmentService.createAppointment(appointmentDto));
 	}
 	

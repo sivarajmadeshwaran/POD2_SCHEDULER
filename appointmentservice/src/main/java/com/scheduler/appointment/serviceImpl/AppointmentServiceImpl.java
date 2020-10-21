@@ -1,19 +1,14 @@
 package com.scheduler.appointment.serviceImpl;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.apache.kafka.common.metrics.stats.Sum;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.scheduler.appointment.Dto.AppointmentDto;
-import com.scheduler.appointment.Dto.AppointmentSlotDto;
 import com.scheduler.appointment.Dto.PurchaseOrderDto;
 import com.scheduler.appointment.entity.AppoinmentPoPk;
 import com.scheduler.appointment.entity.Appointment;
@@ -44,7 +39,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		int totalQty = poList.stream().map(qty -> qty.getQty()).reduce(0, Integer::sum);
 		for (AppointmentSlot slot : apptSlotList) {
 			int usedTruckCount = appointmentRepo.getCountBySlotId(slot.getId());
-			if (usedTruckCount < slot.getMaxTruckCount()) {
+			if(usedTruckCount < slot.getMaxTruckCount()) {
 				appointment.setAppointmentSlotId(slot.getId());
 				appointment.setDcNumber(appointmentDto.getDcNumber());
 				appointment.setAppointmentDate(appointmentDto.getAppointmentDate());
@@ -61,7 +56,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 					appointmentPoRepo.save(apptPo);
 				}
 			}
-			throw new BusinessException("Maximum Truck Count reached for the slot");
+			
 		}
 
 		appointmentRepo.save(appointment);
