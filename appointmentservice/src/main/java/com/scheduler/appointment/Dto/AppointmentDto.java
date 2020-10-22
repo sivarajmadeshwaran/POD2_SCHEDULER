@@ -20,6 +20,8 @@ public class AppointmentDto {
 	
 	private List<PurchaseOrderDto> pos;	
 	
+	private int appointmentStatusId;
+	
 	
 	
 	public List<PurchaseOrderDto> getPos() {
@@ -75,14 +77,6 @@ public class AppointmentDto {
 		this.dcNumber = dcNumber;
 	}
 
-//	public String getBookingSlot() {
-//		return bookingSlot;
-//	}
-//
-//	public void setBookingSlot(String bookingSlot) {
-//		this.bookingSlot = bookingSlot;
-//	}
-
 	public Date getAppointmentDate() {
 		return appointmentDate;
 	}
@@ -93,6 +87,14 @@ public class AppointmentDto {
 
 	public int getTruckNumber() {
 		return truckNumber;
+	}
+
+	public void setAppointmentStatusId(int appointmentStatusId) {
+		this.appointmentStatusId = appointmentStatusId;
+	}
+	
+	public int getAppointmentStatusId() {
+		return appointmentStatusId;
 	}
 
 	public void setTruckNumber(int truckNumber) {

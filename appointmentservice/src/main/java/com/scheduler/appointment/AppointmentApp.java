@@ -20,8 +20,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan(basePackages="com.scheduler.*")
 @EntityScan(basePackages="com.scheduler.*")
 @EnableJpaRepositories("com.scheduler.*")
-//@EnableEurekaClient
 //@EnableFeignClients
+//@EnableEurekaClient
 public class AppointmentApp extends SpringBootServletInitializer
 {
     public static void main( String[] args )
