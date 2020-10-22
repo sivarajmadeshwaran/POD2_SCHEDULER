@@ -70,6 +70,10 @@ CREATE TABLE `hibernate_sequence` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+
+
+INSERT INTO scheduler.hibernate_sequence (next_val) VALUES (0);
+
 CREATE TABLE `truck` (
   `truck_nbr` int(10) unsigned NOT NULL,
   `truck_type` int(10) unsigned NOT NULL,

@@ -87,6 +87,13 @@
     <artifactId>feign-hystrix</artifactId>
     <version>8.18.0</version>
 </dependency>
+<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-stream -->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-stream</artifactId>
+    <version>3.0.8.RELEASE</version>
+</dependency>
+
 
 
 
