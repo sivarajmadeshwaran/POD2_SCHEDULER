@@ -29,9 +29,20 @@ public class Appointment {
 
 	@Column(name="booking_slot_id")
 	private Integer appointmentSlotId;
+	
+	@Column(name="appt_status_id")
+	private int appointmentStatusId;
 
 	public Integer getAppointmentSlotId() {
 		return appointmentSlotId;
+	}
+
+	public int getAppointmentStatusId() {
+		return appointmentStatusId;
+	}
+
+	public void setAppointmentStatusId(int appointmentStatusId) {
+		this.appointmentStatusId = appointmentStatusId;
 	}
 
 	public void setAppointmentSlotId(Integer appointmentSlotId) {
