@@ -1,11 +1,11 @@
-package com.atlas.scheduler.purchaseorder;
+package com.atlas.scheduler.purchaseorder.datatransfer;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class PurchaseOrderLine {
+public class PurchaseOrderLineDto {
 	 private Integer poLineNbr;
 	 private Integer upc;
 	 private String itemDesc;
