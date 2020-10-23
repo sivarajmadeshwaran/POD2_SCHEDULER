@@ -1,6 +1,7 @@
 package com.scheduler.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -22,5 +23,7 @@ public interface DcSlotRepository extends JpaRepository<DcSlot, DcSlotPK>{
 	@Modifying
 	@Query(value = "update dc_slot set obsolete_indicator='Y' where dc_nbr=:existId", nativeQuery = true)
 	void deleteDcSlot(@Param("existId") int existId);
+
+
 	
 }

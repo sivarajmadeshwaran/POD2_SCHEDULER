@@ -21,19 +21,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sun.istack.NotNull;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
 @Entity
 @Table(name = "dc")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class Dc implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -63,6 +52,8 @@ public class Dc implements Serializable {
 	@NotNull
 	private Date updatedAt;
 
+	public Dc() {
+	}
 
 	public int getDc_number() {
 		return dc_number;
@@ -70,6 +61,22 @@ public class Dc implements Serializable {
 
 	public void setDc_number(int dc_number) {
 		this.dc_number = dc_number;
+	}
+
+	public DcType getDcTypeBean() {
+		return dcTypeBean;
+	}
+
+	public void setDcTypeBean(DcType dcTypeBean) {
+		this.dcTypeBean = dcTypeBean;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
 	}
 
 	public String getDc_city() {
@@ -80,31 +87,12 @@ public class Dc implements Serializable {
 		this.dc_city = dc_city;
 	}
 
-	public Date getcreatedAt() {
-		return createdAt;
-	}
-
-	public void setcreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public Date getUpdateAt() {
+	public Date getUpdatedAt() {
 		return updatedAt;
 	}
 
 	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = createdAt;
+		this.updatedAt = updatedAt;
 	}
 
-
-	public DcType getDcTypeBean() {
-		return dcTypeBean;
-	}
-
-	public void setDcTypeBean(DcType dcTypeBean) {
-		this.dcTypeBean = dcTypeBean;
-	}
-
-	public Dc() {
-	}
 }

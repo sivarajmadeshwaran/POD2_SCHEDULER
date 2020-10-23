@@ -1,6 +1,7 @@
 package com.scheduler.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,107 +12,52 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.scheduler.VendorNotFoundException;
-import com.scheduler.Repository.VendorRepository;
 import com.scheduler.entity.Vendor;
-import com.scheduler.service.DcService;
+import com.scheduler.exception.ResourceExistsException;
+import com.scheduler.exception.ResourceNotFoundException;
 import com.scheduler.service.VendorService;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
-@RequestMapping("/api/vendor")
+@RequestMapping("/vendor")
 public class VendorController {
 	
 	
 	@Autowired
 	private VendorService vendorService;
+
 	
-	@Autowired
-	private VendorRepository vendorRepository;
-	
+	// Create new vendor
 	@PostMapping
-	public Vendor saveVendor(@RequestBody Vendor vendor) {
-		return vendorService.addVendor(vendor);
+	public ResponseEntity<Object> createVendor(@RequestBody Vendor vendor) throws ResourceExistsException,Exception {
+		vendorService.addVendorDetail(vendor);
+		return new ResponseEntity<>("Vendor detail is added successfully", HttpStatus.CREATED);
 	}
 	
+	
+	// Find all vendors
 	@GetMapping
-	public List<Vendor> findAllVendors(){
-		return vendorService.getVendors();
+	public ResponseEntity<Object> findAllVendors(){
+		 return new ResponseEntity<>(vendorService.findAllVendors(), HttpStatus.OK);
 	}
 	
+	// Find vendor by Id
 	@GetMapping("/{id}")
-	public Optional<Vendor> getVendorById(@PathVariable (value="id") int id){
-		return vendorService.getVendorById(id);
+	public ResponseEntity<Object> getVendorById(@PathVariable (value="id") int id) throws ResourceNotFoundException{
+		return new ResponseEntity<>(vendorService.getVendorById(id), HttpStatus.OK);
 	}
 
+	// Modify vendor by Id 
 	@PutMapping("/{id}")
-	public Vendor updateVendor(@RequestBody Vendor vendor, @PathVariable ("id") int vendor_id) {
-		Vendor existId= this.vendorRepository.findById(vendor_id)
-				.orElseThrow(() -> new VendorNotFoundException("Vendor Is Not Available " + vendor_id) );
-		existId.setName(vendor.getName());
-		existId.setPhone(vendor.getPhone());
-		existId.setMail(vendor.getMail());
-		existId.setAddress(vendor.getAddress());
-		return this.vendorRepository.save(existId);
-		
+	public ResponseEntity<Object> modifyVendor(@PathVariable ("id") int vendor_id,@RequestBody Vendor vendor) throws ResourceNotFoundException {
+		vendorService.updateVendorDetail(vendor_id,vendor);
+	    return new ResponseEntity<>("Vendor detail is updated successsfully", HttpStatus.OK);
 	}
 	
+	// Remove vendor by Id
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteVendor(@PathVariable ("id") int vendor_id) {
-		vendorService.deleteVendor(vendor_id);
-		return ResponseEntity.ok().build();
-	}
-	
-	/*
-	@Autowired
-	private VendorRepository vendorRepository;
-	
-	// get all vendor
-	
-	@GetMapping
-	public List<Vendor> getAllVendor(){
-			return this.vendorRepository.findAll();
-	}
-	
-	// get vendor by id
-	
-	@GetMapping("/{id}")
-	public Vendor getVendorById(@PathVariable (value="id") int id) {
-		return this.vendorRepository.findById(id)
-				.orElseThrow(() -> new VendorNotFoundException("Dc Type Is Not Available : " + id) );
-		}
-		
-	// Create vendor
-	
-	@PostMapping
-	public Vendor createvendor(@RequestBody Vendor vendor) {
-		return this.vendorRepository.save(vendor);
-	}
-	
-	//update vendor by id
-	
-	@PutMapping("/{id}")
-	public Vendor updateVendor(@RequestBody Vendor vendor, @PathVariable ("id") int vendor_id) {
-		Vendor existId= this.vendorRepository.findById(vendor_id)
-				.orElseThrow(() -> new VendorNotFoundException("Vendor Is Not Available " + vendor_id) );
-		existId.setName(vendor.getName());
-		existId.setPhone(vendor.getPhone());
-		existId.setMail(vendor.getMail());
-		existId.setAddress(vendor.getAddress());
-		return this.vendorRepository.save(existId);
-		
+	public ResponseEntity<Object> deleteVendor(@PathVariable ("id") int vendor_id) throws ResourceNotFoundException {
+		vendorService.deleteVendorDetail(vendor_id);
+		return new ResponseEntity<>("Vendor detail is removed successfully", HttpStatus.OK);
 	}
 
-	// delete Vendor by Id
-	
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Vendor> deleteVendorById(@PathVariable ("id") int vendor_id){
-		Vendor existId= this.vendorRepository.findById(vendor_id)
-					.orElseThrow(() -> new VendorNotFoundException("Vendor Is Not Available :" +vendor_id) );
-			this.vendorRepository.delete(existId);
-			return ResponseEntity.ok().build();
-	}
-	*/
 }

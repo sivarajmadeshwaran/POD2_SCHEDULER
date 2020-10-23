@@ -12,8 +12,16 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.istack.NotNull;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name="vendor")
@@ -35,7 +43,7 @@ public class Vendor {
 	@Column(name="address")
 	private String address;
 	
-	@Column(name = "created_timestamp")
+	@Column(name = "created_timestamp",updatable=false)
 	@Temporal(TemporalType.TIMESTAMP)
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	@NotNull
@@ -51,8 +59,6 @@ public class Vendor {
 
 	public Vendor() {}
 	
-	
-
 	public Vendor(String name, int phone, String mail, String address, Date createdDt, Date lastUpdatedDt) {
 		super();
 		this.name = name;
@@ -119,6 +125,6 @@ public class Vendor {
 	public void setLastUpdatedDt(Date lastUpdatedDt) {
 		this.lastUpdatedDt = lastUpdatedDt;
 	}
-
+	
 	
 }
