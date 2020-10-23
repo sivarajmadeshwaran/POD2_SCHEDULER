@@ -46,13 +46,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 	AppointmentRepo appointmentRepo;
 	@Autowired
 	AppointmentPoRepo appointmentPoRepo;
-	
-	@Autowired
-    private KafkaTemplate<String,Appointment> kafkaTemplate;
-	
 
-    @Value("${kafka.topic}")
-    private String topicName;
+	@Autowired
+	private KafkaTemplate<String, Appointment> kafkaTemplate;
+
+	@Value("${kafka.topic}")
+	private String topicName;
 
 	@Override
 	public Object createAppointment(AppointmentDto appointmentDto) throws BusinessException {
@@ -61,9 +60,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 		List<PurchaseOrderDto> poList = appointmentDto.getPos();
 		Iterable<AppointmentPo> itr = appointmentPoRepo.findAll();
 		int totalQty = poList.stream().map(qty -> qty.getQty()).reduce(0, Integer::sum);
+		int sumOfMaxTruckCount = apptSlotList.stream().map(count -> count.getMaxTruckCount()).reduce(0, Integer::sum);
 		for (AppointmentSlot slot : apptSlotList) {
 			int usedTruckCount = appointmentRepo.getCountBySlotId(slot.getId());
-			if (usedTruckCount < slot.getMaxTruckCount()) {
+			if (usedTruckCount < sumOfMaxTruckCount) {
 				appointment.setAppointmentSlotId(slot.getId());
 				appointment.setDcNumber(appointmentDto.getDcNumber());
 				appointment.setAppointmentDate(appointmentDto.getAppointmentDate());
@@ -80,34 +80,35 @@ public class AppointmentServiceImpl implements AppointmentService {
 					apptPo.setApptPoId(apptPoId);
 					appointmentPoRepo.save(apptPo);
 				}
+				sendAppointmentInfoToDownStream(appointment);
+			} else {
+				throw new BusinessException(" Max truck count reached ");
 			}
 
 		}
-		sendAppointmentInfoToDownStream(appointment);
 		return appointment;
 	}
 
-	 void sendAppointmentInfoToDownStream(Appointment appointment) {
-        Message<Appointment> message = MessageBuilder.withPayload(appointment).build();
-        StringBuilder sb = new StringBuilder();
-        final ListenableFuture<SendResult<String, Appointment>> producer = kafkaTemplate.send(topicName, appointment);
-        producer.addCallback(new ListenableFutureCallback<SendResult<String, Appointment>>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                sb.append(throwable.getMessage());
-                throwable.printStackTrace();
-            }
-
+	void sendAppointmentInfoToDownStream(Appointment appointment) {
+		Message<Appointment> message = MessageBuilder.withPayload(appointment).build();
+		StringBuilder sb = new StringBuilder();
+		final ListenableFuture<SendResult<String, Appointment>> producer = kafkaTemplate.send(topicName, appointment);
+		producer.addCallback(new ListenableFutureCallback<SendResult<String, Appointment>>() {
+			@Override
+			public void onFailure(Throwable throwable) {
+				sb.append(throwable.getMessage());
+				throwable.printStackTrace();
+			}
 
 			@Override
 			public void onSuccess(SendResult<String, Appointment> result) {
-				  System.out.println("Data successfully registered with Kafka Topic..");
-	                System.out.println("Partition -> "+result.getRecordMetadata().partition());
-	                System.out.println("Offset -> "+result.getRecordMetadata().offset());				
+				System.out.println("Data successfully registered with Kafka Topic..");
+				System.out.println("Partition -> " + result.getRecordMetadata().partition());
+				System.out.println("Offset -> " + result.getRecordMetadata().offset());
 			}
-        });
-        
-    }		
+		});
+
+	}
 
 	@Override
 	public Object getAllAppointment() {
@@ -117,7 +118,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Transactional
 	@Override
 	public void deleteAppointment(Integer id) {
-		appointmentRepo.deleteAppointment(id,AppointmentStatus.DELETED.getStatusId());
+		appointmentRepo.deleteAppointment(id, AppointmentStatus.DELETED.getStatusId());
 	}
 
 	@Transactional
