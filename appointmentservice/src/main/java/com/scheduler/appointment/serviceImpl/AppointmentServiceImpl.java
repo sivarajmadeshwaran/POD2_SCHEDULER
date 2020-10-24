@@ -58,29 +58,31 @@ public class AppointmentServiceImpl implements AppointmentService {
 		List<AppointmentSlot> apptSlotList = appointmentSlotService.getAvailableSlots(appointmentDto.getDcNumber());
 		Appointment appointment = new Appointment();
 		List<PurchaseOrderDto> poList = appointmentDto.getPos();
-		Iterable<AppointmentPo> itr = appointmentPoRepo.findAll();
 		int totalQty = poList.stream().map(qty -> qty.getQty()).reduce(0, Integer::sum);
-		int sumOfMaxTruckCount = apptSlotList.stream().map(count -> count.getMaxTruckCount()).reduce(0, Integer::sum);
+		boolean appointmentConfirmedFlag = false;
 		for (AppointmentSlot slot : apptSlotList) {
-			int usedTruckCount = appointmentRepo.getCountBySlotId(slot.getId());
-			if (usedTruckCount < sumOfMaxTruckCount) {
-				appointment.setAppointmentSlotId(slot.getId());
-				appointment.setDcNumber(appointmentDto.getDcNumber());
-				appointment.setAppointmentDate(appointmentDto.getAppointmentDate());
-				appointment.setTruckNumber(appointmentDto.getTruckNumber());
-				appointment.setCreatedTimeStamp(new Date());
-				appointment.setQty(totalQty);
-				appointment.setAppointmentStatusId(AppointmentStatus.SCHEDULED.getStatusId());
-				appointmentRepo.save(appointment);
-				for (PurchaseOrderDto po : appointmentDto.getPos()) {
-					AppointmentPo apptPo = new AppointmentPo();
-					AppoinmentPoPk apptPoId = new AppoinmentPoPk();
-					apptPoId.setAppointmentId(appointment.getAppiointmentId());
-					apptPoId.setPoNumber(po.getPoNbr());
-					apptPo.setApptPoId(apptPoId);
-					appointmentPoRepo.save(apptPo);
+			if (!appointmentConfirmedFlag) {
+				int usedTruckCount = appointmentRepo.getCountBySlotId(slot.getId());
+				if (usedTruckCount < slot.getMaxTruckCount()) {
+					appointment.setAppointmentSlotId(slot.getId());
+					appointment.setDcNumber(appointmentDto.getDcNumber());
+					appointment.setAppointmentDate(appointmentDto.getAppointmentDate());
+					appointment.setTruckNumber(appointmentDto.getTruckNumber());
+					appointment.setCreatedTimeStamp(new Date());
+					appointment.setQty(totalQty);
+					appointment.setAppointmentStatusId(AppointmentStatus.SCHEDULED.getStatusId());
+					appointmentRepo.save(appointment);
+					for (PurchaseOrderDto po : appointmentDto.getPos()) {
+						AppointmentPo apptPo = new AppointmentPo();
+						AppoinmentPoPk apptPoId = new AppoinmentPoPk();
+						apptPoId.setAppointmentId(appointment.getAppiointmentId());
+						apptPoId.setPoNumber(po.getPoNbr());
+						apptPo.setApptPoId(apptPoId);
+						appointmentPoRepo.save(apptPo);
+					}
+					appointmentConfirmedFlag = true;
+					sendAppointmentInfoToDownStream(appointment);
 				}
-				sendAppointmentInfoToDownStream(appointment);
 			} else {
 				throw new BusinessException(" Max truck count reached ");
 			}
