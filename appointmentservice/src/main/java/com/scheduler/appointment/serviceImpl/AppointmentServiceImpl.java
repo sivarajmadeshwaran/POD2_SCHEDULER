@@ -1,7 +1,11 @@
 package com.scheduler.appointment.serviceImpl;
 
+import static org.junit.jupiter.api.DynamicTest.stream;
+
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -117,10 +121,16 @@ public class AppointmentServiceImpl implements AppointmentService {
 		return appointmentRepo.findAll();
 	}
 
-	@Transactional
 	@Override
-	public void deleteAppointment(Integer id) {
-		appointmentRepo.deleteAppointment(id, AppointmentStatus.DELETED.getStatusId());
+	public void deleteAppointment(Integer id){
+		List<AppointmentPo> appointmentPos = appointmentPoRepo.getAppointmentPoById(id);
+		AppoinmentPoPk appoinmentPoPk = new AppoinmentPoPk();
+		for(AppointmentPo po: appointmentPos) {
+			appoinmentPoPk.setAppointmentId(po.getApptPoId().getAppointmentId());
+			appoinmentPoPk.setPoNumber(po.getApptPoId().getPoNumber());
+		}
+		appointmentRepo.deleteById(id);
+		appointmentPoRepo.deleteById(appoinmentPoPk);
 	}
 
 	@Transactional
