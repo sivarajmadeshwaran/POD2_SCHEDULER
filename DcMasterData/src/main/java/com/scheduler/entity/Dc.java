@@ -21,6 +21,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sun.istack.NotNull;
 
+/**
+ * The persistent class for the dc table in database.
+*/
+
 @Entity
 @Table(name = "dc")
 public class Dc implements Serializable {

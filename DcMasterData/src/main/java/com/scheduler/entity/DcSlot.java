@@ -16,6 +16,10 @@ import lombok.Setter;
 
 import java.util.Date;
 
+/**
+ * The persistent class for the dc_slot table in database.
+*/
+
 @Entity
 @Table(name="dc_slot")
 @Getter

@@ -16,6 +16,9 @@ import com.scheduler.exception.ResourceExistsException;
 import com.scheduler.exception.ResourceNotFoundException;
 import com.scheduler.service.TruckService;
 
+/**
+ * This is  to expose Truck Domain related API's
+*/
 
 @RestController
 @RequestMapping("/setup/truck")

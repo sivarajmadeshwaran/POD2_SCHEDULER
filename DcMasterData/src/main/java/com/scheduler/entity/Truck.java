@@ -18,6 +18,10 @@ import lombok.ToString;
 
 import java.util.Date;
 
+/**
+ * The persistent class for the truck table in database.
+*/
+
 @Entity
 @Table(name = "truck")
 @Getter

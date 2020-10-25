@@ -1,7 +1,6 @@
 package com.scheduler.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -19,9 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.scheduler.Repository.DcSlotRepository;
 import com.scheduler.entity.DcSlot;
-import com.scheduler.entity.DcSlotPK;
-import com.scheduler.exception.ResourceExistsException;
 import com.scheduler.service.DcSlotService;
+
+/**
+ * This is  to expose DcSlot Domain related API's
+*/
 
 @RestController
 @RequestMapping("/setup/dcslot")

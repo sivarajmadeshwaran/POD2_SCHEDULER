@@ -10,13 +10,21 @@ import com.scheduler.entity.Vendor;
 import com.scheduler.exception.ResourceExistsException;
 import com.scheduler.exception.ResourceNotFoundException;
 
+/**
+ * This is for Vendor Domain Business Implementation
+*/
+
 @Service
 public class VendorServiceImpl implements VendorService {
 	
 	@Autowired
 	private VendorRepository vendorRepository;
 	
-	// Add new vendor detail
+	/**
+	 *  This is to persist the Vendor detail.
+	 * @param Vendor DTO
+	 * @return void
+	*/
 	public void addVendorDetail(Vendor vendor) throws ResourceExistsException,Exception {
 		int vendorId=vendor.getId();
 		Optional<Vendor> id = vendorRepository.findById(vendorId);
@@ -33,20 +41,28 @@ public class VendorServiceImpl implements VendorService {
 	}
 
 	
-	// Find all vendors
+	/**
+	 *  This is to get all the vendor details
+	*/
 	public Object findAllVendors() {
 		return vendorRepository.findAll();
 	}
 	
 	
-	// Retrieve vendor detail by Id 
+	/**
+	 *  This is to get vendor details based on ID.
+	 *  @param Vendor Id 
+	*/
 	public Object getVendorById(int id) throws ResourceNotFoundException{
 		return vendorRepository.findById(id)
 		        .orElseThrow(() -> new ResourceNotFoundException("Vendor details not found for this id : " + id));
 	}
 	
 	
-	// Modify existing vendor details
+	/**
+	 *  This is to modify vendor details based on ID.
+	 *  @param Vendor Id , Vendor DTO
+	*/
 	public void updateVendorDetail(int vendor_id, Vendor vendor) throws ResourceNotFoundException {
 	
 		vendorRepository.findById(vendor_id)
@@ -59,7 +75,10 @@ public class VendorServiceImpl implements VendorService {
 		vendorRepository.save(vendor);
 	}
 
-	// Remove vendor by id
+	/**
+	 *  This is to remove vendor details based on ID.
+	 *  @param Vendor Id 
+	*/
 	public void deleteVendorDetail(int id) throws ResourceNotFoundException {
 		vendorRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Vendor id "  + id + "is not available to remove the data"));

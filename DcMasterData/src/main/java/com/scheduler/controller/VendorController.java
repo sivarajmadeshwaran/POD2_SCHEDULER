@@ -17,6 +17,11 @@ import com.scheduler.exception.ResourceExistsException;
 import com.scheduler.exception.ResourceNotFoundException;
 import com.scheduler.service.VendorService;
 
+
+/**
+ * This is  to expose  Vendor Domain related   API's
+*/
+
 @RestController
 @RequestMapping("/vendor")
 public class VendorController {

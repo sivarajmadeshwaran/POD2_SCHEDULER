@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.scheduler.entity.DcSlot;
 import com.scheduler.entity.DcSlotPK;
+import com.scheduler.entity.Vendor;
 
 public class DcSlotControllerTest extends AbstractTest{
 
@@ -40,8 +41,8 @@ public class DcSlotControllerTest extends AbstractTest{
 	    String uri = "http://localhost:8080/setup/dcslot";
 	    
 	    DcSlotPK pk=new DcSlotPK();
-	    pk.setDcNbr(6561);
-	    pk.setBookingSlot("07:00");
+	    pk.setDcNbr(7560);
+	    pk.setBookingSlot("07:00-08:00");
 	    
 	    DcSlot dcslot=new DcSlot();
 	    dcslot.setMaxTrucks(15);
@@ -63,11 +64,11 @@ public class DcSlotControllerTest extends AbstractTest{
 	 
 	@Test
 	public void updateDc() throws Exception {
-	    String uri = "http://localhost:8080/setup/dcslot/6561/07:00";
+	    String uri = "http://localhost:8080/setup/dcslot/7560/07:00-08:00";
 	    
 	    DcSlotPK pk=new DcSlotPK();
-	    pk.setDcNbr(6561);
-	    pk.setBookingSlot("07:00");
+	    pk.setDcNbr(7560);
+	    pk.setBookingSlot("07:00-08:00");
 	    
 	    DcSlot dcslot=new DcSlot();
 	    dcslot.setId(1);
@@ -88,9 +89,44 @@ public class DcSlotControllerTest extends AbstractTest{
 	
 	 @Test
 	 public void deleteDc() throws Exception {
-	      String uri = "http://localhost:8080/setup/dcslot/6561/07:00";
+	      String uri = "http://localhost:8080/setup/dcslot/7560/07:00-08:00";
 	      MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri)).andReturn();
 	      int status = mvcResult.getResponse().getStatus();
 	      assertEquals(200, status);
 	 }
+
+	 @Test
+	 public void when_CreateDcSlotHasError() throws Exception {
+	    String uri = "http://localhost:8080/setup/dcslot";
+	    DcSlotPK pk=new DcSlotPK();
+	    pk.setDcNbr(6561);
+	    pk.setBookingSlot("07:00-08:00");
+	    
+	    DcSlot dcslot=new DcSlot();
+	    dcslot.setMaxTrucks(15);
+	    dcslot.setSlotId(pk);
+	    dcslot.setObsolete_indicator("N");
+	    dcslot.setCreatedTimestamp(new Date());
+	    dcslot.setLastUpdatedTimestamp(new Date());
+	    
+	    String inputJson = super.mapToJson(dcslot);
+	    MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri)
+	         .contentType(MediaType.APPLICATION_JSON_VALUE)
+	         .content(inputJson)).andReturn();
+	      
+	    int status = mvcResult.getResponse().getStatus();
+	    assertEquals(409, status);
+	 }
+
+	 @Test
+	 public void when_NoDcSlotToDelete() throws Exception {
+	    String uri = "http://localhost:8080/setup/dcslot/6562/07:00-08:00";
+	    MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri)
+	         .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+	      
+	    int status = mvcResult.getResponse().getStatus();
+	    assertEquals(204, status);
+	}
+
+
 }

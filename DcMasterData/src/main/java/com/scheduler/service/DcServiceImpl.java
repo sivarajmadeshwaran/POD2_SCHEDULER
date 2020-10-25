@@ -5,13 +5,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.scheduler.Repository.DcRepository;
-import com.scheduler.Repository.DcSlotRepository;
 import com.scheduler.entity.Dc;
-import com.scheduler.entity.DcSlot;
-import com.scheduler.entity.DcSlotPK;
-import com.scheduler.entity.Vendor;
 import com.scheduler.exception.ResourceExistsException;
 import com.scheduler.exception.ResourceNotFoundException;
+
+/**
+ * This is for DC Domain Business Implementation
+*/
+
 
 @Component
 public class DcServiceImpl implements DcService{
@@ -20,7 +21,11 @@ public class DcServiceImpl implements DcService{
 	private DcRepository dcRepository;
 
 	
-	// Add new Dc
+	/**
+	 *  This is to persist the DC detail.
+	 * @param Dc DTO
+	 * @return void
+	*/
 	public void createNewDC(Dc dc) throws ResourceExistsException,Exception {
 		int dcNbr=dc.getDc_number();
 		Optional<Dc> id = dcRepository.findById(dcNbr);
@@ -34,18 +39,28 @@ public class DcServiceImpl implements DcService{
 		
 	}
 
-	// Find all Dcs
+	
+	/**
+	 *  This is to get all the Dc details
+	*/
 	public Object findDcs() {
 		return dcRepository.findAll();
 	}
 	
-	// Retrieve Dc by Id
+	/**
+	 *  This is to get Dc details based on ID.
+	 *  @param Dc Nbr 
+	*/
 	public Object findDcById(int id) throws ResourceNotFoundException {
 		return dcRepository.findById(id)
 		        .orElseThrow(() -> new ResourceNotFoundException("Dc detail is not found for : "+ id  ));
 	}
 
-	// Modify existing Dc Detail
+	
+	/**
+	 *  This is to modify Dc details based on ID.
+	 *  @param Dc Nbr , Dc DTO
+	*/
 	public void updateDc(Dc dc, int dc_id) throws ResourceNotFoundException {
 		
 		dcRepository.findById(dc_id)
@@ -55,7 +70,10 @@ public class DcServiceImpl implements DcService{
 		dcRepository.save(dc);
 	}
 	
-	// Remove Dc by Id
+	/**
+	 *  This is to remove Dc details based on ID.
+	 *  @param Dc Nbr 
+	*/
 	public void removeDcById(int id) throws ResourceNotFoundException {
 		dcRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Dc "  + id + "is not available to remove the data"));

@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.scheduler.entity.Dc;
 import com.scheduler.entity.DcType;
+import com.scheduler.entity.Vendor;
 
 public class DcControllerTest extends AbstractTest{
 
@@ -98,4 +99,49 @@ public class DcControllerTest extends AbstractTest{
 	      String content = mvcResult.getResponse().getContentAsString();
 	      assertEquals(content, "Dc detail removed successfully");
 	 }
+
+	 @Test
+	 public void whenCreateDcHasError() throws Exception {
+		String uri = "http://localhost:8080/setup/dc";
+		    
+		DcType dcType=new DcType();
+		dcType.setId(-1);
+		dcType.setTypeDesc("Regional");
+		dcType.setCreatedAt(new Date());
+		    
+		Dc dc=new Dc();
+		dc.setDc_number(7560);
+		dc.setDc_city("MX");
+		dc.setDcTypeBean(dcType);
+		dc.setCreatedAt(new Date());
+		dc.setUpdatedAt(new Date());
+	    String inputJson = super.mapToJson(dc);
+	    MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri)
+	         .contentType(MediaType.APPLICATION_JSON_VALUE)
+	         .content(inputJson)).andReturn();
+	      
+	    int status = mvcResult.getResponse().getStatus();
+	    assertEquals(409, status);
+	 }
+
+	 @Test
+	 public void when_NoDcById() throws Exception {
+	    String uri = "http://localhost:8080/setup/dc/20";
+	    MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
+	         .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+	      
+	    int status = mvcResult.getResponse().getStatus();
+	    assertEquals(204, status);
+	}
+
+	 @Test
+	 public void when_NoDcToDelete() throws Exception {
+	    String uri = "http://localhost:8080/setup/dc/20";
+	    MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
+	         .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+	      
+	    int status = mvcResult.getResponse().getStatus();
+	    assertEquals(204, status);
+	}
+
 }

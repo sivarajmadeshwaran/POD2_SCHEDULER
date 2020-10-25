@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.scheduler.entity.Truck;
 import com.scheduler.entity.TruckType;
+import com.scheduler.entity.Vendor;
 
 public class TruckControllerTest extends AbstractTest{
 
@@ -63,7 +64,7 @@ public class TruckControllerTest extends AbstractTest{
 	}
 	 
 	@Test
-	public void updateDc() throws Exception {
+	public void updateTruck() throws Exception {
 	    String uri = "http://localhost:8080/setup/truck/1234";
 	    
 	    TruckType type=new TruckType();
@@ -90,7 +91,7 @@ public class TruckControllerTest extends AbstractTest{
 	 }
 	
 	 @Test
-	 public void deleteDc() throws Exception {
+	 public void deleteTruck() throws Exception {
 	      String uri = "http://localhost:8080/setup/truck/1234";
 	      MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri)).andReturn();
 	      int status = mvcResult.getResponse().getStatus();
@@ -98,4 +99,51 @@ public class TruckControllerTest extends AbstractTest{
 	      String content = mvcResult.getResponse().getContentAsString();
 	      assertEquals(content, "Truck detail removed successfully");
 	 }
+
+	@Test
+	public void whenCreateTruckHasError() throws Exception {
+		String uri = "http://localhost:8080/setup/truck";
+
+		TruckType type = new TruckType();
+		type.setId(-1);
+		type.setTypeDescription("Straight Truck");
+		type.setCreatedTimestamp(new Date());
+
+		Truck truck = new Truck();
+		truck.setTruckNbr(1234);
+		truck.setTruckName("JBL");
+		truck.setTruckTypeBean(type);
+		truck.setCreatedTimestamp(new Date());
+		truck.setLastUpdatedTimestamp(new Date());
+
+		String inputJson = super.mapToJson(truck);
+
+		MvcResult mvcResult = mvc.perform(
+				MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson))
+				.andReturn();
+
+		int status = mvcResult.getResponse().getStatus();
+		assertEquals(409, status);
+	}
+
+	 @Test
+	 public void when_NoTrucksById() throws Exception {
+	    String uri = "http://localhost:8080/setup/truck/5";
+	    MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
+	         .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+	      
+	    int status = mvcResult.getResponse().getStatus();
+	    assertEquals(204, status);
+	}
+
+	 @Test
+	 public void when_NoTruckToDelete() throws Exception {
+	    String uri = "http://localhost:8080/setup/truck/5";
+	    MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
+	         .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+	      
+	    int status = mvcResult.getResponse().getStatus();
+	    assertEquals(204, status);
+	}
+
 }
