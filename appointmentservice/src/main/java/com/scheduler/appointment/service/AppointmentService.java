@@ -10,7 +10,7 @@ public interface AppointmentService {
 
 	Object getAllAppointment();
 
-	void deleteAppointment(Integer id);
+	void deleteAppointment(Integer id) throws BusinessException;
 
 	void updateAppointment(AppointmentDto appointmentDto, int id);
 

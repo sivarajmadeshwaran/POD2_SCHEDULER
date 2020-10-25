@@ -34,7 +34,7 @@ public class AppointmentController {
 	}
 
 	@DeleteMapping("/delete/{id}")
-	public void deleteAppointment(@PathVariable Integer id) {
+	public void deleteAppointment(@PathVariable Integer id) throws BusinessException {
 		appointmentService.deleteAppointment(id);
 
 	}

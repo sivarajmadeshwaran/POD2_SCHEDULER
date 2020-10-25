@@ -57,42 +57,40 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Value("${kafka.topic}")
 	private String topicName;
 
+	@SuppressWarnings("unused")
 	@Override
 	public Object createAppointment(AppointmentDto appointmentDto) throws BusinessException {
 		List<AppointmentSlot> apptSlotList = appointmentSlotService.getAvailableSlots(appointmentDto.getDcNumber());
 		Appointment appointment = new Appointment();
 		List<PurchaseOrderDto> poList = appointmentDto.getPos();
 		int totalQty = poList.stream().map(qty -> qty.getQty()).reduce(0, Integer::sum);
-		boolean appointmentConfirmedFlag = false;
 		for (AppointmentSlot slot : apptSlotList) {
-			if (!appointmentConfirmedFlag) {
-				int usedTruckCount = appointmentRepo.getCountBySlotId(slot.getId());
-				if (usedTruckCount < slot.getMaxTruckCount()) {
-					appointment.setAppointmentSlotId(slot.getId());
-					appointment.setDcNumber(appointmentDto.getDcNumber());
-					appointment.setAppointmentDate(appointmentDto.getAppointmentDate());
-					appointment.setTruckNumber(appointmentDto.getTruckNumber());
-					appointment.setCreatedTimeStamp(new Date());
-					appointment.setQty(totalQty);
-					appointment.setAppointmentStatusId(AppointmentStatus.SCHEDULED.getStatusId());
-					appointmentRepo.save(appointment);
-					for (PurchaseOrderDto po : appointmentDto.getPos()) {
-						AppointmentPo apptPo = new AppointmentPo();
-						AppoinmentPoPk apptPoId = new AppoinmentPoPk();
-						apptPoId.setAppointmentId(appointment.getAppiointmentId());
-						apptPoId.setPoNumber(po.getPoNbr());
-						apptPo.setApptPoId(apptPoId);
-						appointmentPoRepo.save(apptPo);
-					}
-					appointmentConfirmedFlag = true;
-					sendAppointmentInfoToDownStream(appointment);
+			int usedTruckCount = appointmentRepo.getCountBySlotId(slot.getId());
+			if (usedTruckCount < slot.getMaxTruckCount()) {
+				appointment.setAppointmentSlotId(slot.getId());
+				appointment.setDcNumber(appointmentDto.getDcNumber());
+				appointment.setAppointmentDate(appointmentDto.getAppointmentDate());
+				appointment.setTruckNumber(appointmentDto.getTruckNumber());
+				appointment.setCreatedTimeStamp(new Date());
+				appointment.setQty(totalQty);
+				appointment.setAppointmentStatusId(AppointmentStatus.SCHEDULED.getStatusId());
+				appointmentRepo.save(appointment);
+				for (PurchaseOrderDto po : appointmentDto.getPos()) {
+					AppointmentPo apptPo = new AppointmentPo();
+					AppoinmentPoPk apptPoId = new AppoinmentPoPk();
+					apptPoId.setAppointmentId(appointment.getAppiointmentId());
+					apptPoId.setPoNumber(po.getPoNbr());
+					apptPo.setApptPoId(apptPoId);
+					appointmentPoRepo.save(apptPo);
 				}
-			} else {
-				throw new BusinessException(" Max truck count reached ");
+				sendAppointmentInfoToDownStream(appointment);
 			}
-
 		}
-		return appointment;
+		if (null!=appointment.getAppiointmentId()) {
+			return appointment;
+		} else {
+			throw new BusinessException("Maximum Truck count reached");
+		}
 	}
 
 	void sendAppointmentInfoToDownStream(Appointment appointment) {
@@ -122,15 +120,19 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public void deleteAppointment(Integer id){
+	public void deleteAppointment(Integer id) throws BusinessException {
 		List<AppointmentPo> appointmentPos = appointmentPoRepo.getAppointmentPoById(id);
 		AppoinmentPoPk appoinmentPoPk = new AppoinmentPoPk();
-		for(AppointmentPo po: appointmentPos) {
-			appoinmentPoPk.setAppointmentId(po.getApptPoId().getAppointmentId());
-			appoinmentPoPk.setPoNumber(po.getApptPoId().getPoNumber());
+		if (null != appointmentPos) {
+			for (AppointmentPo po : appointmentPos) {
+				appoinmentPoPk.setAppointmentId(po.getApptPoId().getAppointmentId());
+				appoinmentPoPk.setPoNumber(po.getApptPoId().getPoNumber());
+			}
+			appointmentRepo.deleteById(id);
+			appointmentPoRepo.deleteById(appoinmentPoPk);
+		} else {
+			throw new BusinessException("Appointment Id not found");
 		}
-		appointmentRepo.deleteById(id);
-		appointmentPoRepo.deleteById(appoinmentPoPk);
 	}
 
 	@Transactional
