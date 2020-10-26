@@ -2,13 +2,10 @@ package com.scheduler.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -16,11 +13,13 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.istack.NotNull;
 
 
 @Entity
 @Table(name="dc_type")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class DcType implements Serializable{
 	
 	private static final long serialVersionUID=1L;
@@ -41,6 +40,7 @@ public class DcType implements Serializable{
 
 //	@OneToMany(mappedBy = "dcTypeBean",cascade = CascadeType.ALL)
 //  private List<Dc> dcs;
+	
 	public int getId() {
 		return id;
 	}

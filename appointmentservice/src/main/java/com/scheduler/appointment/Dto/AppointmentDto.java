@@ -5,6 +5,12 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+
+/**
+ * <h1>Appointment Data transfer Object</h1>
+ *
+ */
 @Data
 @NoArgsConstructor
 public class AppointmentDto {

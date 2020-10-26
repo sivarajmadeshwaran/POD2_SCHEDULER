@@ -6,13 +6,14 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.GeneratedValue;
 
+
+/**
+ * Appointment_po table composite primary key
+ */
 @Embeddable
 public class AppoinmentPoPk implements Serializable{
 	
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@GeneratedValue

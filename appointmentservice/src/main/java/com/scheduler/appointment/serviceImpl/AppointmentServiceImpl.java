@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -28,14 +27,12 @@ import com.scheduler.appointment.repo.AppointmentRepo;
 import com.scheduler.appointment.service.AppointmentService;
 import com.scheduler.appointment.service.AppointmentSlotService;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
-import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
-import org.springframework.web.bind.annotation.*;
 
+/**
+ * <h1>Appointment service implementation</h1>
+ *
+ */
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
 
@@ -53,44 +50,54 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Value("${kafka.topic}")
 	private String topicName;
 
+	/**
+	 * <h1>Creating appointment /h1>
+	 * 
+	 * @param appointmentDto
+	 * @return appointment object
+	 */
+	@SuppressWarnings("unused")
 	@Override
 	public Object createAppointment(AppointmentDto appointmentDto) throws BusinessException {
 		List<AppointmentSlot> apptSlotList = appointmentSlotService.getAvailableSlots(appointmentDto.getDcNumber());
 		Appointment appointment = new Appointment();
 		List<PurchaseOrderDto> poList = appointmentDto.getPos();
 		int totalQty = poList.stream().map(qty -> qty.getQty()).reduce(0, Integer::sum);
-		boolean appointmentConfirmedFlag = false;
 		for (AppointmentSlot slot : apptSlotList) {
-			if (!appointmentConfirmedFlag) {
-				int usedTruckCount = appointmentRepo.getCountBySlotId(slot.getId());
-				if (usedTruckCount < slot.getMaxTruckCount()) {
-					appointment.setAppointmentSlotId(slot.getId());
-					appointment.setDcNumber(appointmentDto.getDcNumber());
-					appointment.setAppointmentDate(appointmentDto.getAppointmentDate());
-					appointment.setTruckNumber(appointmentDto.getTruckNumber());
-					appointment.setCreatedTimeStamp(new Date());
-					appointment.setQty(totalQty);
-					appointment.setAppointmentStatusId(AppointmentStatus.SCHEDULED.getStatusId());
-					appointmentRepo.save(appointment);
-					for (PurchaseOrderDto po : appointmentDto.getPos()) {
-						AppointmentPo apptPo = new AppointmentPo();
-						AppoinmentPoPk apptPoId = new AppoinmentPoPk();
-						apptPoId.setAppointmentId(appointment.getAppiointmentId());
-						apptPoId.setPoNumber(po.getPoNbr());
-						apptPo.setApptPoId(apptPoId);
-						appointmentPoRepo.save(apptPo);
-					}
-					appointmentConfirmedFlag = true;
-					sendAppointmentInfoToDownStream(appointment);
+			int usedTruckCount = appointmentRepo.getCountBySlotId(slot.getId());
+			if (usedTruckCount < slot.getMaxTruckCount()) {
+				appointment.setAppointmentSlotId(slot.getId());
+				appointment.setDcNumber(appointmentDto.getDcNumber());
+				appointment.setAppointmentDate(appointmentDto.getAppointmentDate());
+				appointment.setTruckNumber(appointmentDto.getTruckNumber());
+				appointment.setCreatedTimeStamp(new Date());
+				appointment.setQty(totalQty);
+				appointment.setAppointmentStatusId(AppointmentStatus.SCHEDULED.getStatusId());
+				appointmentRepo.save(appointment);
+				for (PurchaseOrderDto po : appointmentDto.getPos()) {
+					AppointmentPo apptPo = new AppointmentPo();
+					AppoinmentPoPk apptPoId = new AppoinmentPoPk();
+					apptPoId.setAppointmentId(appointment.getAppiointmentId());
+					apptPoId.setPoNumber(po.getPoNbr());
+					apptPo.setApptPoId(apptPoId);
+					appointmentPoRepo.save(apptPo);
 				}
-			} else {
-				throw new BusinessException(" Max truck count reached ");
+				sendAppointmentInfoToDownStream(appointment);
 			}
-
 		}
-		return appointment;
+		if (null != appointment.getAppiointmentId()) {
+			return appointment;
+		} else {
+			throw new BusinessException("Maximum Truck count reached");
+		}
 	}
 
+	/**
+	 * <h1>Sending appointment to down stream</h1>
+	 * 
+	 * @param appointment
+	 * 
+	 */
 	void sendAppointmentInfoToDownStream(Appointment appointment) {
 		Message<Appointment> message = MessageBuilder.withPayload(appointment).build();
 		StringBuilder sb = new StringBuilder();
@@ -112,17 +119,40 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	}
 
+	/**
+	 * <h1>getting all appointment</h1>
+	 * 
+	 * @return appointment object
+	 * 
+	 */
 	@Override
 	public Object getAllAppointment() {
 		return appointmentRepo.findAll();
 	}
 
-	@Transactional
 	@Override
-	public void deleteAppointment(Integer id) {
-		appointmentRepo.deleteAppointment(id, AppointmentStatus.DELETED.getStatusId());
+	public void deleteAppointment(Integer id) throws BusinessException {
+		List<AppointmentPo> appointmentPos = appointmentPoRepo.getAppointmentPoById(id);
+		AppoinmentPoPk appoinmentPoPk = new AppoinmentPoPk();
+		if (null != appointmentPos) {
+			for (AppointmentPo po : appointmentPos) {
+				appoinmentPoPk.setAppointmentId(po.getApptPoId().getAppointmentId());
+				appoinmentPoPk.setPoNumber(po.getApptPoId().getPoNumber());
+				appointmentPoRepo.deleteById(appoinmentPoPk);
+			}
+			appointmentRepo.deleteById(id);
+
+		} else {
+			throw new BusinessException("Appointment Id not found");
+		}
 	}
 
+	/**
+	 * <h1>updating appointment by ID</h1>
+	 * 
+	 * @param id,appointmentDto
+	 * 
+	 */
 	@Transactional
 	@Override
 	public void updateAppointment(AppointmentDto appointmentDto, int id) {

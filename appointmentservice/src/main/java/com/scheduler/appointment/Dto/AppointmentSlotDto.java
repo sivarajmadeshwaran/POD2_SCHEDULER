@@ -1,5 +1,10 @@
 package com.scheduler.appointment.Dto;
 
+
+/**
+ * <h1>Appointment slot Data transfer Object</h1>
+ *
+ */
 public class AppointmentSlotDto {
 
 	private int id;

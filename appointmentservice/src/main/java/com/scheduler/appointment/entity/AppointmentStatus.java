@@ -1,5 +1,9 @@
 package com.scheduler.appointment.entity;
 
+/**
+ * <h1>Appointment status enum</h1>
+ *
+ */
 public enum AppointmentStatus {
 
 	SCHEDULED(1, "Scheduled"), MODIFIED(2, "Updated"), DELETED(3, "Deleted");
@@ -7,7 +11,7 @@ public enum AppointmentStatus {
 	private int statusId;
 
 	private String status;
-	
+
 	AppointmentStatus(int statusId, String status) {
 		this.statusId = statusId;
 		this.status = status;
@@ -28,7 +32,5 @@ public enum AppointmentStatus {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-
-
 
 }
