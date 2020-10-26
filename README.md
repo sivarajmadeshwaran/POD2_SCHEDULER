@@ -6,7 +6,7 @@
       2. Appointment domain related CRUD Operations & Asychronous Message Events
       3. Purchase Order domain related CRUD Operations & Asychronous Message Events
 ## MicroService Design
-  ![Alt Text](https://github.com/sivarajmadeshwaran/POD2_SCHEDULER/blob/main/CaseStudy_Docs/Atlas_Domain_design.PNG)
+  ![Alt Text](https://github.com/sivarajmadeshwaran/POD2_SCHEDULER/blob/main/CaseStudy_Docs/Atlas_Microservices_Design.PNG)
  
 ## Data Model Design
    ![Atlas TruckBooking App Data Model](https://github.com/sivarajmadeshwaran/POD2_SCHEDULER/blob/main/CaseStudy_Docs/Atlas_Data_Model.pdf)
