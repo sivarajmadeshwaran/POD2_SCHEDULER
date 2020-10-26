@@ -11,9 +11,13 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sun.istack.NotNull;
+
+/**
+ * The persistent class for the vendor table in database.
+*/
+
 
 @Entity
 @Table(name="vendor")
@@ -35,7 +39,7 @@ public class Vendor {
 	@Column(name="address")
 	private String address;
 	
-	@Column(name = "created_timestamp")
+	@Column(name = "created_timestamp",updatable=false)
 	@Temporal(TemporalType.TIMESTAMP)
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	@NotNull
@@ -51,8 +55,6 @@ public class Vendor {
 
 	public Vendor() {}
 	
-	
-
 	public Vendor(String name, int phone, String mail, String address, Date createdDt, Date lastUpdatedDt) {
 		super();
 		this.name = name;
@@ -119,6 +121,6 @@ public class Vendor {
 	public void setLastUpdatedDt(Date lastUpdatedDt) {
 		this.lastUpdatedDt = lastUpdatedDt;
 	}
-
+	
 	
 }

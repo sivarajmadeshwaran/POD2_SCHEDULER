@@ -1,9 +1,8 @@
 package com.scheduler.controller;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,57 +11,55 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.scheduler.TruckNotFoundException;
-import com.scheduler.Repository.TruckRepository;
 import com.scheduler.entity.Truck;
+import com.scheduler.exception.ResourceExistsException;
+import com.scheduler.exception.ResourceNotFoundException;
 import com.scheduler.service.TruckService;
 
-
+/**
+ * This is  to expose Truck Domain related API's
+*/
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/setup/truck")
 public class TruckController {
 	
 	@Autowired
 	private TruckService truckService;
 	
-	@Autowired
-	private TruckRepository truckRepository;
 
-	@PostMapping("/addTruck")
-	public String addTruck(@RequestBody Truck truck) {
-	return truckService.saveTruck(truck);
+	// Create new truck
+	@PostMapping
+	public ResponseEntity<Object> createTruck(@RequestBody Truck truck) throws ResourceExistsException,Exception{
+		truckService.addNewTruck(truck);
+		return new ResponseEntity<>("Truck detail is added successfully", HttpStatus.CREATED);
 	}
 
-	@PostMapping("/addTrucks")
-	public String addDCs(@RequestBody List<Truck> trucks) {
-	return truckService.saveTruckList(trucks);
+	// Find all Trucks
+	@GetMapping
+	public ResponseEntity<Object> findTrucks() {
+		return new ResponseEntity<>(truckService.findAllTrucks(), HttpStatus.OK);
 	}
 
-	@GetMapping("/getTrucks")
-	public List<Truck> getTrucks() {
-		return truckService.getTruckList();
-		}
-
-	@DeleteMapping("/deleteTruck/{id}")
-	public String deleteTruck(@PathVariable int id) {
-		return truckService.deleteTruckById(id);
+	// Retrieve Truck by Id
+	@GetMapping("/{id}")
+	public ResponseEntity<Object> getTruckById(@PathVariable (value="id") int id)  throws ResourceNotFoundException{
+		return new ResponseEntity<>(truckService.findTruckById(id), HttpStatus.OK);
 	}
 
-	@PutMapping("/updateTruck/{id}")
-	public Truck updateDc(@RequestBody Truck truck, @PathVariable ("id") int truck_id) {
-		Truck existId= this.truckRepository.findById(truck_id)
-				.orElseThrow(() -> new TruckNotFoundException("Id Is Not Available " + truck_id) );
-		existId.setTruckName(truck.getTruckName());
-		return this.truckRepository.save(existId);
+	// Modify Truck detail
+	@PutMapping("/{id}")
+	public ResponseEntity<Object> modifyTruck(@RequestBody Truck truck, @PathVariable ("id") int truck_id) throws ResourceNotFoundException {
+		truckService.updateTruck(truck,truck_id);
+		return new ResponseEntity<>("Truck detail is updated successsfully", HttpStatus.OK);
 		
 	}
 	
-	@GetMapping("/getTruckById/{id}")
-	public Optional<Truck> getTruckById(@PathVariable (value="id") int id){
-		return truckService.getTruckById(id);
+	// Remove Truck
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Object> removeTruck(@PathVariable int id) throws ResourceNotFoundException  {
+		 truckService.deleteTruckById(id);
+		 return new ResponseEntity<>("Truck detail removed successfully", HttpStatus.OK);
 	}
-
 
 }

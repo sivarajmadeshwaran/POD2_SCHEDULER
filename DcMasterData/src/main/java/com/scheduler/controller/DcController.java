@@ -1,9 +1,8 @@
 package com.scheduler.controller;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,55 +11,54 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.scheduler.DcNotFoundException;
-import com.scheduler.Repository.DcRepository;
 import com.scheduler.entity.Dc;
+import com.scheduler.exception.ResourceExistsException;
+import com.scheduler.exception.ResourceNotFoundException;
 import com.scheduler.service.DcService;
 
+/**
+ * This is  to expose Dc Domain related API's
+*/
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/setup/dc")
 public class DcController {
 	
 	@Autowired
 	private DcService dcservice;
 	
-	@Autowired
-	private DcRepository dcRepository;
 
-	@PostMapping("/addDc")
-	public String addDC(@RequestBody Dc dc) {
-	return dcservice.saveDC(dc);
+	// Create new Dc
+	@PostMapping
+	public ResponseEntity<Object> createDc(@RequestBody Dc dc) throws ResourceExistsException, Exception {
+		dcservice.createNewDC(dc);
+		return new ResponseEntity<>("Dc detail is added successfully", HttpStatus.CREATED);
 	}
 
-	@PostMapping("/addDcs")
-	public String addDCs(@RequestBody List<Dc> dcs) {
-	return dcservice.saveDcList(dcs);
+	// Find all Dcs
+	@GetMapping
+	public ResponseEntity<Object> findAlldcs() {
+		return new ResponseEntity<>(dcservice.findDcs(), HttpStatus.OK);
 	}
 
-	@GetMapping("/getDcs")
-	public List<Dc> getDcs() {
-		return dcservice.getDcList();
-		}
-
-	@DeleteMapping("/deleteDc/{id}")
-	public String deleteDc(@PathVariable int id) {
-		return dcservice.deleteDcById(id);
-	}
-
-	@PutMapping("/updateDc/{id}")
-	public Dc updateDc(@RequestBody Dc dc, @PathVariable ("id") int dc_id) {
-		Dc existId= this.dcRepository.findById(dc_id)
-				.orElseThrow(() -> new DcNotFoundException("Id Is Not Available " + dc_id) );
-		existId.setDc_city(dc.getDc_city());
-		return this.dcRepository.save(existId);
+	// Find Dc by Id
+	@GetMapping("/{id}")
+	public ResponseEntity<Object> getDcById(@PathVariable (value="id") int id) throws ResourceNotFoundException{
+		return new ResponseEntity<>(dcservice.findDcById(id), HttpStatus.OK);
 	}
 	
-	@GetMapping("/getDc/{id}")
-	public Optional<Dc> getDcById(@PathVariable (value="id") int id){
-		return dcservice.getDcById(id);
+	// Modify Dc detail
+	@PutMapping("/{id}")
+	public ResponseEntity<Object> modifyDc(@RequestBody Dc dc, @PathVariable ("id") int dc_id) throws ResourceNotFoundException {
+		dcservice.updateDc(dc,dc_id);
+		return new ResponseEntity<>("Dc detail is updated successsfully", HttpStatus.OK);
 	}
-
+	
+	// Remove Dc
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Object> removeDc(@PathVariable int id) throws ResourceNotFoundException {
+		dcservice.removeDcById(id);
+		return new ResponseEntity<>("Dc detail removed successfully", HttpStatus.OK);
+	}
 
 }
