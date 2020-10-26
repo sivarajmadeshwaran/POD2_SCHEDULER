@@ -10,6 +10,11 @@ import com.scheduler.appointment.entity.AppointmentSlot;
 import com.scheduler.appointment.repo.AppointmentSlotRepo;
 import com.scheduler.appointment.service.AppointmentSlotService;
 
+
+/**
+ * <h1>Appointment slot service implementation</h1>
+ *
+ */
 @Service
 public class AppointmentSlotServiceImpl implements AppointmentSlotService{
 

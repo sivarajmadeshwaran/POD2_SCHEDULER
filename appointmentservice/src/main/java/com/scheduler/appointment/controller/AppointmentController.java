@@ -16,6 +16,12 @@ import com.scheduler.appointment.Dto.AppointmentDto;
 import com.scheduler.appointment.exception.BusinessException;
 import com.scheduler.appointment.service.AppointmentService;
 
+
+
+/**
+ * <h1>Appointment creation CRUD operation controller</h1>
+ *
+ */
 @RestController
 public class AppointmentController {
 	@Autowired

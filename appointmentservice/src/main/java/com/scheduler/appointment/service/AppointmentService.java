@@ -4,6 +4,10 @@ package com.scheduler.appointment.service;
 import com.scheduler.appointment.Dto.AppointmentDto;
 import com.scheduler.appointment.exception.BusinessException;
 
+/**
+ * <h1>Appointment service interface</h1>
+ *
+ */
 public interface AppointmentService {
 
 	Object createAppointment(AppointmentDto appointmentDto) throws BusinessException;

@@ -1,11 +1,7 @@
 package com.scheduler.appointment.serviceImpl;
 
-import static org.junit.jupiter.api.DynamicTest.stream;
-
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -14,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -32,14 +27,12 @@ import com.scheduler.appointment.repo.AppointmentRepo;
 import com.scheduler.appointment.service.AppointmentService;
 import com.scheduler.appointment.service.AppointmentSlotService;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
-import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
-import org.springframework.web.bind.annotation.*;
 
+/**
+ * <h1>Appointment service implementation</h1>
+ *
+ */
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
 

@@ -12,6 +12,11 @@ import com.scheduler.appointment.entity.AppoinmentPoPk;
 import com.scheduler.appointment.entity.Appointment;
 import com.scheduler.appointment.entity.AppointmentPo;
 
+
+/**
+ * <h1>Appointment CRUD Repository </h1>
+ *
+ */
 public interface AppointmentRepo extends CrudRepository<Appointment, Integer> {
 
 	@Query(value = "select count(*) from appointment where booking_slot_id = :id", nativeQuery = true)

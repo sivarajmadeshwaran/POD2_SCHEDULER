@@ -1,5 +1,9 @@
 package com.scheduler.appointment.entity;
 
+/**
+ * <h1>DC_slot table entity</h1>
+ *
+ */
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,22 +33,18 @@ public class AppointmentSlot implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="id")
+	@Column(name = "id")
 	private int id;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "last_updated_timestamp")
 	private Date lastUpdatedTimestamp;
 
-	@Column(name="booking_slot")
+	@Column(name = "booking_slot")
 	private String bookingSlot;
-	
-	@Column(name="dc_nbr")
+
+	@Column(name = "dc_nbr")
 	private int dcNumber;
-	
-	
-//	@EmbeddedId
-//	private DcSlotPK dcSlotPK;
 
 	public String getBookingSlot() {
 		return bookingSlot;
@@ -62,7 +62,7 @@ public class AppointmentSlot implements Serializable {
 		this.dcNumber = dcNumber;
 	}
 
-	@Column(name="max_truck_count")
+	@Column(name = "max_truck_count")
 	private int maxTruckCount;
 
 	public int getMaxTruckCount() {
@@ -72,14 +72,14 @@ public class AppointmentSlot implements Serializable {
 	public void setMaxTruckCount(int maxTruckCount) {
 		this.maxTruckCount = maxTruckCount;
 	}
-//
-//	public DcSlotPK getDcSlotPK() {
-//		return dcSlotPK;
-//	}
-//
-//	public void setDcSlotPK(DcSlotPK dcSlotPK) {
-//		this.dcSlotPK = dcSlotPK;
-//	}
+	//
+	// public DcSlotPK getDcSlotPK() {
+	// return dcSlotPK;
+	// }
+	//
+	// public void setDcSlotPK(DcSlotPK dcSlotPK) {
+	// this.dcSlotPK = dcSlotPK;
+	// }
 
 	public Date getCreatedTimestamp() {
 		return this.createdTimestamp;

@@ -2,6 +2,11 @@ package com.scheduler.appointment.Dto;
 
 import java.util.List;
 
+
+/**
+ * <h1>Purchase order Data transfer Object</h1>
+ *
+ */
 public class PurchaseOrderDto {
 	
 	private int poNbr;
