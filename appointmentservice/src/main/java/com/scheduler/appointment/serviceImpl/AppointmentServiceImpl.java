@@ -57,6 +57,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Value("${kafka.topic}")
 	private String topicName;
 
+	/**
+	 * <h1>Creating appointment /h1>
+	 * 
+	 * @param appointmentDto
+	 * @return appointment object
+	 */
 	@SuppressWarnings("unused")
 	@Override
 	public Object createAppointment(AppointmentDto appointmentDto) throws BusinessException {
@@ -86,13 +92,19 @@ public class AppointmentServiceImpl implements AppointmentService {
 				sendAppointmentInfoToDownStream(appointment);
 			}
 		}
-		if (null!=appointment.getAppiointmentId()) {
+		if (null != appointment.getAppiointmentId()) {
 			return appointment;
 		} else {
 			throw new BusinessException("Maximum Truck count reached");
 		}
 	}
 
+	/**
+	 * <h1>Sending appointment to down stream</h1>
+	 * 
+	 * @param appointment
+	 * 
+	 */
 	void sendAppointmentInfoToDownStream(Appointment appointment) {
 		Message<Appointment> message = MessageBuilder.withPayload(appointment).build();
 		StringBuilder sb = new StringBuilder();
@@ -114,6 +126,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	}
 
+	/**
+	 * <h1>getting all appointment</h1>
+	 * 
+	 * @return appointment object
+	 * 
+	 */
 	@Override
 	public Object getAllAppointment() {
 		return appointmentRepo.findAll();
@@ -127,14 +145,21 @@ public class AppointmentServiceImpl implements AppointmentService {
 			for (AppointmentPo po : appointmentPos) {
 				appoinmentPoPk.setAppointmentId(po.getApptPoId().getAppointmentId());
 				appoinmentPoPk.setPoNumber(po.getApptPoId().getPoNumber());
+				appointmentPoRepo.deleteById(appoinmentPoPk);
 			}
 			appointmentRepo.deleteById(id);
-			appointmentPoRepo.deleteById(appoinmentPoPk);
+
 		} else {
 			throw new BusinessException("Appointment Id not found");
 		}
 	}
 
+	/**
+	 * <h1>updating appointment by ID</h1>
+	 * 
+	 * @param id,appointmentDto
+	 * 
+	 */
 	@Transactional
 	@Override
 	public void updateAppointment(AppointmentDto appointmentDto, int id) {

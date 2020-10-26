@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 
 /**
- * Hello world!
+ * Appointment creation service!
  *
  */
 @SpringBootApplication
