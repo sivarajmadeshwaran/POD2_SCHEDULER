@@ -60,9 +60,10 @@ public class PoDownload {
 	 * topic(Basically reprocessing the failure messages of main topic)
 	 * 
 	 * @param order
+	 * @throws Exception 
 	 */
 	@KafkaListener(topics = "${po.download.retry.topic}", groupId = "${po.download.consumer.group}", containerFactory = "kafkaListenerRetryContainerFactory")
-	public void retryDownloadPo(ConsumerRecord<Integer, PurchaseOrderDto> order) {
+	public void retryDownloadPo(ConsumerRecord<Integer, PurchaseOrderDto> order) throws Exception {
 		try {
 
 			log.debug("Retry the processing for Po# {}", order.key());

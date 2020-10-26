@@ -1,7 +1,6 @@
 package com.atlas.scheduler.gateway.configuration;
 
 import java.io.IOException;
-import java.util.StringJoiner;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -51,7 +50,6 @@ public class JwtFilter extends OncePerRequestFilter {
 			return;
 		}
 		UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
-		System.out.println("Authentication -- " + authentication.getPrincipal());
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		filterChain.doFilter(request, response);
 	}
