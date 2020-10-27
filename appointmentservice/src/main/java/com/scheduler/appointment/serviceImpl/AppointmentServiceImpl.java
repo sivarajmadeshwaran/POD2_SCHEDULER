@@ -2,6 +2,7 @@ package com.scheduler.appointment.serviceImpl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -27,6 +28,8 @@ import com.scheduler.appointment.repo.AppointmentRepo;
 import com.scheduler.appointment.service.AppointmentService;
 import com.scheduler.appointment.service.AppointmentSlotService;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
 /**
@@ -34,6 +37,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
  *
  */
 @Service
+@Slf4j
 public class AppointmentServiceImpl implements AppointmentService {
 
 	@Autowired
@@ -50,6 +54,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Value("${kafka.topic}")
 	private String topicName;
 
+	@Autowired
+	private PurchaseOrderFeignClient purchaseOrderFeign;
+
 	/**
 	 * <h1>Creating appointment /h1>
 	 * 
@@ -61,28 +68,27 @@ public class AppointmentServiceImpl implements AppointmentService {
 	public Object createAppointment(AppointmentDto appointmentDto) throws BusinessException {
 		List<AppointmentSlot> apptSlotList = appointmentSlotService.getAvailableSlots(appointmentDto.getDcNumber());
 		Appointment appointment = new Appointment();
-		List<PurchaseOrderDto> poList = appointmentDto.getPos();
-		int totalQty = poList.stream().map(qty -> qty.getQty()).reduce(0, Integer::sum);
-		for (AppointmentSlot slot : apptSlotList) {
-			int usedTruckCount = appointmentRepo.getCountBySlotId(slot.getId());
-			if (usedTruckCount < slot.getMaxTruckCount()) {
-				appointment.setAppointmentSlotId(slot.getId());
-				appointment.setDcNumber(appointmentDto.getDcNumber());
-				appointment.setAppointmentDate(appointmentDto.getAppointmentDate());
-				appointment.setTruckNumber(appointmentDto.getTruckNumber());
-				appointment.setCreatedTimeStamp(new Date());
-				appointment.setQty(totalQty);
-				appointment.setAppointmentStatusId(AppointmentStatus.SCHEDULED.getStatusId());
-				appointmentRepo.save(appointment);
-				for (PurchaseOrderDto po : appointmentDto.getPos()) {
-					AppointmentPo apptPo = new AppointmentPo();
-					AppoinmentPoPk apptPoId = new AppoinmentPoPk();
-					apptPoId.setAppointmentId(appointment.getAppiointmentId());
-					apptPoId.setPoNumber(po.getPoNbr());
-					apptPo.setApptPoId(apptPoId);
-					appointmentPoRepo.save(apptPo);
+		if (checkPoAvailability(appointmentDto.getPos())) {
+			for (AppointmentSlot slot : apptSlotList) {
+				int usedTruckCount = appointmentRepo.getCountBySlotId(slot.getId());
+				if (usedTruckCount < slot.getMaxTruckCount()) {
+					appointment.setAppointmentSlotId(slot.getId());
+					appointment.setDcNumber(appointmentDto.getDcNumber());
+					appointment.setAppointmentDate(appointmentDto.getAppointmentDate());
+					appointment.setTruckNumber(appointmentDto.getTruckNumber());
+					appointment.setCreatedTimeStamp(new Date());
+					appointment.setAppointmentStatusId(AppointmentStatus.SCHEDULED.getStatusId());
+					appointmentRepo.save(appointment);
+					for (PurchaseOrderDto po : appointmentDto.getPos()) {
+						AppointmentPo apptPo = new AppointmentPo();
+						AppoinmentPoPk apptPoId = new AppoinmentPoPk();
+						apptPoId.setAppointmentId(appointment.getAppiointmentId());
+						apptPoId.setPoNumber(po.getPoNbr());
+						apptPo.setApptPoId(apptPoId);
+						appointmentPoRepo.save(apptPo);
+					}
+					sendAppointmentInfoToDownStream(appointment);
 				}
-				sendAppointmentInfoToDownStream(appointment);
 			}
 		}
 		if (null != appointment.getAppiointmentId()) {
@@ -160,6 +166,18 @@ public class AppointmentServiceImpl implements AppointmentService {
 		appointmentDto.setAppointmentStatusId(AppointmentStatus.MODIFIED.getStatusId());
 		int totalQty = poList.stream().map(qty -> qty.getQty()).reduce(0, Integer::sum);
 		appointmentRepo.updateAppointment(totalQty, id);
+	}
+
+	private boolean checkPoAvailability(List<PurchaseOrderDto> poList) {
+		if (poList != null && !poList.isEmpty()) {
+			List<PurchaseOrderDto> purchaseOrderDtos = purchaseOrderFeign
+					.getPoDetails(poList.stream().map(po -> po.getPoNbr()).collect(Collectors.toList()));
+			List<PurchaseOrderDto> availablePos = purchaseOrderDtos.stream()
+					.filter(po -> poList.stream().anyMatch(inputPo -> inputPo.getPoNbr() == po.getPoNbr()))
+					.collect(Collectors.toList());
+			return poList.size() == availablePos.size();
+		}
+		return false;
 	}
 
 }
