@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -68,6 +69,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 	public Object createAppointment(AppointmentDto appointmentDto) throws BusinessException {
 		List<AppointmentSlot> apptSlotList = appointmentSlotService.getAvailableSlots(appointmentDto.getDcNumber());
 		Appointment appointment = new Appointment();
+		List<PurchaseOrderDto> poList = appointmentDto.getPos();
+		int totalQty = poList.stream().map(qty -> qty.getQty()).reduce(0, Integer::sum);
 		if (checkPoAvailability(appointmentDto.getPos())) {
 			for (AppointmentSlot slot : apptSlotList) {
 				int usedTruckCount = appointmentRepo.getCountBySlotId(slot.getId());
@@ -78,6 +81,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 					appointment.setTruckNumber(appointmentDto.getTruckNumber());
 					appointment.setCreatedTimeStamp(new Date());
 					appointment.setAppointmentStatusId(AppointmentStatus.SCHEDULED.getStatusId());
+					appointment.setQty(totalQty);
 					appointmentRepo.save(appointment);
 					for (PurchaseOrderDto po : appointmentDto.getPos()) {
 						AppointmentPo apptPo = new AppointmentPo();
@@ -87,11 +91,14 @@ public class AppointmentServiceImpl implements AppointmentService {
 						apptPo.setApptPoId(apptPoId);
 						appointmentPoRepo.save(apptPo);
 					}
-					sendAppointmentInfoToDownStream(appointment);
+
 				}
 			}
+		} else {
+			throw new BusinessException("PO is not valid");
 		}
 		if (null != appointment.getAppiointmentId()) {
+			sendAppointmentInfoToDownStream(appointment);
 			return appointment;
 		} else {
 			throw new BusinessException("Maximum Truck count reached");
@@ -163,9 +170,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Override
 	public void updateAppointment(AppointmentDto appointmentDto, int id) {
 		List<PurchaseOrderDto> poList = appointmentDto.getPos();
-		appointmentDto.setAppointmentStatusId(AppointmentStatus.MODIFIED.getStatusId());
-		int totalQty = poList.stream().map(qty -> qty.getQty()).reduce(0, Integer::sum);
-		appointmentRepo.updateAppointment(totalQty, id);
+		Appointment appointment = new Appointment();
+		if (checkPoAvailability(appointmentDto.getPos())) {
+			int totalQty = poList.stream().map(qty -> qty.getQty()).reduce(0, Integer::sum);
+			appointment.setQty(totalQty);
+			appointment.setAppointmentStatusId(AppointmentStatus.MODIFIED.getStatusId());
+			appointmentRepo.updateAppointment(totalQty, id, appointmentDto.getAppointmentDate());
+		}
 	}
 
 	private boolean checkPoAvailability(List<PurchaseOrderDto> poList) {

@@ -1,5 +1,6 @@
 package com.scheduler.appointment.repo;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Modifying;
@@ -7,10 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.scheduler.appointment.Dto.AppointmentDto;
-import com.scheduler.appointment.entity.AppoinmentPoPk;
 import com.scheduler.appointment.entity.Appointment;
-import com.scheduler.appointment.entity.AppointmentPo;
 
 
 /**
@@ -23,7 +21,7 @@ public interface AppointmentRepo extends CrudRepository<Appointment, Integer> {
 	int getCountBySlotId(@Param("id") int id);
 
 	@Modifying
-	@Query(value = "update appointment set qty=:qty where appointment_id =:id", nativeQuery = true)
-	void updateAppointment(@Param("qty") int totalQty, @Param("id") int id);
+	@Query(value = "update appointment set qty=:qty,appt_date =:apptDate where appointment_id =:id", nativeQuery = true)
+	void updateAppointment(@Param("qty") int totalQty, @Param("id") int id,@Param("apptDate") Date appointmentDate);
 
 }
