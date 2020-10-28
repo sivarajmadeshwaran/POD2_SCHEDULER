@@ -17,15 +17,17 @@ import com.scheduler.entity.DcSlotPK;
 @Repository
 public interface DcSlotRepository extends JpaRepository<DcSlot, DcSlotPK>{
 	List<DcSlot> findBySlotIdDcNbr(int dcNbr);
+	List<DcSlot> findBySlotIdBookingSlot(String bookingSlot);
+	 
+	@Modifying
+	@Query(value = "update dc_slot set max_trucks=:maxTrucks where dc_nbr=:existId and booking_slot=:existSlot", nativeQuery = true)
+	void updateDcSlot(@Param("existId") int existId, @Param("maxTrucks") int maxTrucks, @Param("existSlot") String existSlot);
 
 	@Modifying
-	@Query(value = "update dc_slot set max_trucks=:maxTrucks where dc_nbr=:existId", nativeQuery = true)
-	void updateDcSlot(@Param("existId") int existId, @Param("maxTrucks") int maxTrucks);
-
-	@Modifying
-	@Query(value = "update dc_slot set obsolete_indicator='Y' where dc_nbr=:existId", nativeQuery = true)
-	void deleteDcSlot(@Param("existId") int existId);
-
-
+	@Query(value = "update dc_slot set obsolete_indicator='Y' where dc_nbr=:existId and booking_slot=:existSlot", nativeQuery = true)
+	void deleteDcSlot(@Param("existId") int existId, @Param("existSlot") String existSlot);
+	
+	@Query(value = "select * from dc_slot d where d.dc_nbr = :id and d.booking_slot = :bSlot",nativeQuery = true)
+	List<DcSlot> getDcSlotById(@Param("id") int id,@Param("bSlot") String bSlot);
 	
 }

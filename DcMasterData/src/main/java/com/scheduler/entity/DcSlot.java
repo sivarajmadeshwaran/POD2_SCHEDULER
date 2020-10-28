@@ -55,7 +55,7 @@ public class DcSlot implements Serializable {
 	@UpdateTimestamp
 	@NotNull
 	private Date lastUpdatedTimestamp;
-
+	
 	public DcSlot() {}
 
 	public DcSlotPK getSlotId() {
