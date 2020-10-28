@@ -27,7 +27,7 @@ public interface DcSlotRepository extends JpaRepository<DcSlot, DcSlotPK>{
 	@Query(value = "update dc_slot set obsolete_indicator='Y' where dc_nbr=:existId and booking_slot=:existSlot", nativeQuery = true)
 	void deleteDcSlot(@Param("existId") int existId, @Param("existSlot") String existSlot);
 	
-	@Query(value = "select * from dc_slot d where d.dc_nbr = :id and d.booking_slot = :bSlot",nativeQuery = true)
-	List<DcSlot> getDcSlotById(@Param("id") int id,@Param("bSlot") String bSlot);
+	@Query(value = "select * from dc_slot d where d.dc_nbr = :id",nativeQuery = true)
+	List<DcSlot> getDcSlotById(@Param("id") int id);
 	
 }

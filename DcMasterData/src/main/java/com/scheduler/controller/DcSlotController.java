@@ -49,14 +49,14 @@ public class DcSlotController {
 		return new ResponseEntity<>(dcSlotService.getDcSlots(), HttpStatus.OK);
 	}
 	
-	// Get DcSlot detail by Id
-	@GetMapping("/{id}/{bSlot}")
-	public List<DcSlot> findDcSlotById(@PathVariable ("id") int id, @PathVariable ("bSlot") String bSlot) throws ResourceNotFoundException {
-		List<DcSlot> result = dcSlotRepository.getDcSlotById(id,bSlot);
+	// Get DcSlot detail by dcNbr
+	@GetMapping("/{id}")
+	public List<DcSlot> findDcSlotById(@PathVariable ("id") int id) throws ResourceNotFoundException {
+		List<DcSlot> result = dcSlotRepository.getDcSlotById(id);
 		if(result.isEmpty()) {
 			  throw new ResourceNotFoundException("DcSlot detail is not found for : "+ id  );
 		  }
-		  return dcSlotRepository.getDcSlotById(id,bSlot);
+		  return dcSlotRepository.getDcSlotById(id);
 	}
 
 	
