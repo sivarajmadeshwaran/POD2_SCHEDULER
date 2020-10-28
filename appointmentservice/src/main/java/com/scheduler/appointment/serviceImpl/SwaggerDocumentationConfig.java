@@ -13,7 +13,7 @@ public class SwaggerDocumentationConfig {
 
 	 ApiInfo apiInfo() {
 	        return new ApiInfoBuilder().title("Appointment Service")
-	                .description("API to Get the Dc Master Data setup Domain Related Details").license("")
+	                .description("API for Appointment CRUD service").license("")
 	                .licenseUrl("http://atlas-casestudy.com").termsOfServiceUrl("").version("1.0.0")
 	                .contact(new Contact("Atlas_Dev", "", "atlas_dev@cognizant.com")).build();
 	        }
