@@ -9,11 +9,11 @@ public class AppointmentSlotDto {
 
 	private int id;
 
-	private int dcNumber;
+	private int dcNbr;
 
 	private String bookingSlot;
 
-	private int maxTruckCount;
+	private int maxTrucks;
 
 	private String createdTimeStamp;
 
@@ -21,9 +21,9 @@ public class AppointmentSlotDto {
 
 	public AppointmentSlotDto(int id,int dcNumber,String bookingSlot,int maxTruckCount,String createdTimeStamp,String lastUpdatedTimeStamp) {
 		this.id = id;
-		this.dcNumber= dcNumber;
+		this.dcNbr= dcNumber;
 				this.bookingSlot =bookingSlot;
-				this.maxTruckCount=maxTruckCount;
+				this.maxTrucks=maxTruckCount;
 				this.createdTimeStamp =createdTimeStamp;
 				this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
 	}
@@ -41,11 +41,11 @@ public class AppointmentSlotDto {
 	}
 
 	public int getDcNumber() {
-		return dcNumber;
+		return dcNbr;
 	}
 
 	public void setDcNumber(int dcNumber) {
-		this.dcNumber = dcNumber;
+		this.dcNbr = dcNumber;
 	}
 
 	public String getBookingSlot() {
@@ -56,12 +56,12 @@ public class AppointmentSlotDto {
 		this.bookingSlot = bookingSlot;
 	}
 
-	public int getMaxTruckCount() {
-		return maxTruckCount;
+	public int getMaxTrucks() {
+		return maxTrucks;
 	}
 
-	public void setMaxTruckCount(int maxTruckCount) {
-		this.maxTruckCount = maxTruckCount;
+	public void setMaxTrucks(int maxTruckCount) {
+		this.maxTrucks = maxTruckCount;
 	}
 
 	public String getCreatedTimeStamp() {

@@ -35,7 +35,7 @@ public class DcSlot implements Serializable {
 	@Column(name="id")
 	private int id;
 	
-	@Column(name="max_trucks")
+	@Column(name="max_truck_count")
 	private int maxTrucks;
 	
 	@Column(name="obsolete_indicator")
