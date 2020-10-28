@@ -10,6 +10,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 
 /**
  * Appointment creation Application!
@@ -22,6 +24,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories("com.scheduler.*")
 @EnableFeignClients
 @EnableCircuitBreaker
+@EnableSwagger2
 public class AppointmentApp extends SpringBootServletInitializer
 {
     public static void main( String[] args )
