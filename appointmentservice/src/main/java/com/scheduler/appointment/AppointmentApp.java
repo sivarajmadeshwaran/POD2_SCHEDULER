@@ -5,14 +5,14 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 
 /**
- * Hello world!
+ * Appointment creation Application!
  *
  */
 @SpringBootApplication
@@ -20,8 +20,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan(basePackages="com.scheduler.*")
 @EntityScan(basePackages="com.scheduler.*")
 @EnableJpaRepositories("com.scheduler.*")
-//@EnableFeignClients
-//@EnableEurekaClient
+@EnableFeignClients
+@EnableCircuitBreaker
 public class AppointmentApp extends SpringBootServletInitializer
 {
     public static void main( String[] args )

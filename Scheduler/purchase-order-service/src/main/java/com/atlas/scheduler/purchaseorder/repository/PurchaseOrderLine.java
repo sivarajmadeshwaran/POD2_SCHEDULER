@@ -39,7 +39,7 @@ public class PurchaseOrderLine implements Serializable {
 	@Column(name="last_updated_timestamp")
 	private LocalDateTime lastUpdatedTimestamp;
 
-	@Column(name="ordered_qty")
+	@Column(name="ordered_qty",updatable=true)
 	private int orderedQty;
 
 	@Column(name="upc_nbr")

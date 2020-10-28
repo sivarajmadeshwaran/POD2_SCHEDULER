@@ -15,6 +15,12 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import com.scheduler.appointment.entity.Appointment;
 
+
+/**
+ * <h1>Kafka producer configuration</h1>
+ *
+ */
+
 @Configuration
 public class KafkaProducerConfiguration {
 

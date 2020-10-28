@@ -1,10 +1,13 @@
 package com.scheduler.appointment.entity;
 
-import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/**
+ * <h1>Appointment_po table entity</h1>
+ *
+ */
 @Entity
 @Table(name="appointment_po")
 public class AppointmentPo {

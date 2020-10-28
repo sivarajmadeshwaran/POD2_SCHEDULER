@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.atlas.scheduler.purchaseorder.datatransfer.PurchaseOrderDto;
+import com.atlas.scheduler.purchaseorder.exception.BusinessException;
 import com.atlas.scheduler.purchaseorder.service.IPurchaseOrderService;
 
 import io.swagger.annotations.ApiOperation;
@@ -33,13 +34,13 @@ public class PurchaseOrderController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = PurchaseOrderDto.class),
 			@ApiResponse(code = 204, message = "No Content")})
 	@PostMapping("/find/poNbrs")
-	public ResponseEntity<List<PurchaseOrderDto>> createOrder(@RequestBody List<Integer> orders) {
+	public ResponseEntity<List<PurchaseOrderDto>> createOrder(@RequestBody List<Integer> orders) throws BusinessException {
 		List<PurchaseOrderDto> pos = orderService.getPoDetailsByNbrs(orders);
 		ResponseEntity<List<PurchaseOrderDto>> responseEntity = null;
 		if (pos != null && !pos.isEmpty()) {
 			responseEntity = new ResponseEntity<>(orderService.getPoDetailsByNbrs(orders), HttpStatus.OK);
 		} else {
-			responseEntity = new ResponseEntity<List<PurchaseOrderDto>>(HttpStatus.NO_CONTENT);
+			responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 		return responseEntity;
 	}

@@ -1,12 +1,11 @@
 package com.atlas.scheduler.purchaseorder.infrastructure;
 
-import java.io.IOException;
-
 import org.apache.kafka.common.serialization.Deserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.atlas.scheduler.purchaseorder.datatransfer.PurchaseOrderDto;
+import com.atlas.scheduler.purchaseorder.infrastructure.PoDeserializerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.AllArgsConstructor;
@@ -39,7 +38,7 @@ public class PoDownloadDeserializer implements Deserializer<PurchaseOrderDto> {
 		try {
 			po = mapper.readValue(data, PurchaseOrderDto.class);
 			log.info("Deserialized for  payloadType:: {} Content :: {} ", payloadType, po.toString());
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.error("Error while Deserializing the Message ", e);
 		}
 		return po;

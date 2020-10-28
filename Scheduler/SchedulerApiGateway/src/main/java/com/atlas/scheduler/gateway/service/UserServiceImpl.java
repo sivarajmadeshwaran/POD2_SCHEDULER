@@ -2,7 +2,6 @@ package com.atlas.scheduler.gateway.service;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -13,8 +12,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -66,8 +63,7 @@ public class UserServiceImpl implements UserService {
 		Set<Roles> roleEntity = getRole(userReq.getRole());
 		user.setRoles(roleEntity);
 		userRepo.save(user);
-		UserDto responseDto = mapper.map(user, UserDto.class);
-		return responseDto;
+		return mapper.map(user, UserDto.class);
 	}
 
 	@Override
@@ -112,7 +108,7 @@ public class UserServiceImpl implements UserService {
 			log.error("Invalid credentials ", e);
 			throw new InvalidCredentialsException("Incorrect username or password");
 		}
-		final UserDetail userDetails = (UserDetail) loadUserByUsername(userReq.getUserId());
+		final UserDetail userDetails = loadUserByUsername(userReq.getUserId());
 		return jwtUtils.generateToken(userDetails);
 	}
 

@@ -12,6 +12,10 @@ import com.scheduler.appointment.entity.Appointment;
 import com.scheduler.appointment.entity.AppointmentSlot;
 
 
+/**
+ * <h1>Appointment Slot CRUD repository</h1>
+ *
+ */
 @Repository
 public interface AppointmentSlotRepo extends CrudRepository<AppointmentSlot, Integer> {
 

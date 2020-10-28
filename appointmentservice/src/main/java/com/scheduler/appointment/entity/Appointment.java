@@ -15,6 +15,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 
+/**
+ * <h1>Appointment table entity</h1>
+ *
+ */
 @Entity
 @Table(name = "appointment")
 public class Appointment {
