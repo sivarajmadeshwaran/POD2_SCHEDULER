@@ -3,10 +3,12 @@ package com.atlas.scheduler.gateway.model;
 import java.io.Serializable;
 import java.util.Set;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class UserDto implements Serializable {
 

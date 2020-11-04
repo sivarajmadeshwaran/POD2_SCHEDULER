@@ -8,6 +8,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import com.atlas.scheduler.purchaseorder.datatransfer.PurchaseOrderDto;
+import com.atlas.scheduler.purchaseorder.exception.BusinessException;
 import com.atlas.scheduler.purchaseorder.service.IPurchaseOrderService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +64,7 @@ public class PoDownload {
 	 * @throws Exception 
 	 */
 	@KafkaListener(topics = "${po.download.retry.topic}", groupId = "${po.download.consumer.group}", containerFactory = "kafkaListenerRetryContainerFactory")
-	public void retryDownloadPo(ConsumerRecord<Integer, PurchaseOrderDto> order) throws Exception {
+	public void retryDownloadPo(ConsumerRecord<Integer, PurchaseOrderDto> order) throws BusinessException {
 		try {
 
 			log.debug("Retry the processing for Po# {}", order.key());
@@ -72,7 +73,7 @@ public class PoDownload {
 			}
 		} catch (Exception e) {
 			log.error("Exception while processing in retry for  Po# {}  Exception {} ", order.key(), e);
-			throw e;
+			throw new BusinessException("Unable to Process Po Download Message in Retry Mode");
 		}
 	}
 

@@ -24,7 +24,7 @@ public class PoDownloadRetryProducerConfig {
 	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapServers;
 	
-	@Value("${po.download.payload.type}")
+	@Value("${po.download.serialized.payload.type}")
 	private String payloadType;
 
 	public Map<String, Object> producerConfig() {

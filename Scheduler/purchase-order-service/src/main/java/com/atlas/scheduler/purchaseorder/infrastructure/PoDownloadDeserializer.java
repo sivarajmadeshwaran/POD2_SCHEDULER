@@ -5,11 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.atlas.scheduler.purchaseorder.datatransfer.PurchaseOrderDto;
-import com.atlas.scheduler.purchaseorder.infrastructure.PoDeserializerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
 public class PoDownloadDeserializer implements Deserializer<PurchaseOrderDto> {
 
 	@Autowired

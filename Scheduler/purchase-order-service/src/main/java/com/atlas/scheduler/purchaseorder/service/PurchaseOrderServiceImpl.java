@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.atlas.scheduler.purchaseorder.datatransfer.PurchaseOrderDto;
+import com.atlas.scheduler.purchaseorder.datatransfer.PurchaseOrderLineDto;
 import com.atlas.scheduler.purchaseorder.exception.BusinessException;
 import com.atlas.scheduler.purchaseorder.repository.PurchaseOrder;
 import com.atlas.scheduler.purchaseorder.repository.PurchaseOrderLine;
@@ -72,6 +73,7 @@ public class PurchaseOrderServiceImpl implements IPurchaseOrderService {
 				ord.setVendorNbr(ordr.getVendor());
 				ord.setAddress(ordr.getAddress());
 				ord.setPoDate(ordr.getPoDate());
+				ord.setPoLine(convertPoLineEntityToDto(ordr.getPurchaseOrderLines()));
 				return ord;
 			}).collect(Collectors.toList());
 		} catch (Exception e) {
@@ -123,6 +125,24 @@ public class PurchaseOrderServiceImpl implements IPurchaseOrderService {
 
 	private <T> Stream<T> collectionToStream(Collection<T> collection) {
 		return Optional.ofNullable(collection).map(Collection::stream).orElseGet(Stream::empty);
+	}
+
+	/**
+	 * This is to convert the PurchaseOrder Line DTO to List of Purchase Order Line
+	 * Entities
+	 * 
+	 * @param order
+	 * @return List of Purchase Order Line Entities
+	 */
+	private List<PurchaseOrderLineDto> convertPoLineEntityToDto(List<PurchaseOrderLine> orderLines) {
+		return orderLines.stream().map(line -> {
+			PurchaseOrderLineDto lineDto = new PurchaseOrderLineDto();
+			lineDto.setPoLineNbr(line.getId().getPoLineNbr());
+			lineDto.setQuantity(line.getOrderedQty());
+			lineDto.setUpc(line.getUpcNbr());
+			lineDto.setItemDesc(line.getItemDescription());
+			return lineDto;
+		}).collect(Collectors.toList());
 	}
 
 }

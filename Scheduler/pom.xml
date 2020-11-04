@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.atlas</groupId>
-	<artifactId>SchedulerApp</artifactId>
+	<artifactId>Scheduler</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>TruckBookingApp</name>
 	<description>App to book the appointment for the vendor trailer</description>
@@ -17,9 +17,9 @@
 	</parent>
 
 	<modules>
-		<module>purchase-order-service</module>
 		<module>EurekaService</module>
-		<module>SchedulerApiGateway</module>  
+		<module>SchedulerApiGateway</module>
+		<module>purchase-order-service</module>
 	</modules>
 
 	<properties>
@@ -60,58 +60,64 @@
 					<groupId>org.junit.vintage</groupId>
 					<artifactId>junit-vintage-engine</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.vaadin.external.google</groupId>
+					<artifactId>android-json</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
 	</dependencies>
 
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-maven-plugin</artifactId>
-				</plugin>
-				
-				<plugin>
-					<groupId>org.sonarsource.scanner.maven</groupId>
-					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.7.0.1746</version>
-				</plugin>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
 
-				<plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>${jacoco.version}</version>
-					<configuration>
-						<skip>${maven.test.skip}</skip>
-						<dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
-						<output>file</output>
-						<append>true</append>
-						<excludes>
-							<exclude>*MethodAccess</exclude>
-						</excludes>
-					</configuration> 
-						<executions>
-							<execution>
-								<id>jacoco-initialize</id>
-								<goals>
-									<goal>prepare-agent</goal>
-								</goals>
-								<phase>test-compile</phase>
-							</execution>
-							<execution>
-								<id>report</id>
-								<phase>test</phase>
-								<goals>
-									<goal>report</goal>
-									<goal>report-aggregate</goal>
-								</goals>
-							</execution>
-						</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.7.0.1746</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<configuration>
+					<skip>${maven.test.skip}</skip>
+					<dataFile>${sonar.jacoco.reportPath}</dataFile>
+					<destFile>${sonar.jacoco.reportPath}</destFile>
+					<output>file</output>
+					<append>true</append>
+				</configuration>
+				<executions>
+					<execution>
+						<id>jacoco-initialize</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<phase>test-compile</phase>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+							<goal>report-aggregate</goal>
+						</goals>
+					</execution>
+					<!-- <execution> <id>agent-for-ut</id> <goals> <goal>prepare-agent</goal> 
+						</goals> <configuration> <append>true</append> <destFile>${sonar.jacoco.reportPath}</destFile> 
+						<dataFile>${sonar.jacoco.reportPath}</dataFile> </configuration> </execution> 
+						<execution> <id>agent-for-it</id> <phase>package</phase> <goals> <goal>prepare-agent-integration</goal> 
+						</goals> <configuration> <append>true</append> <destFile>${sonar.jacoco.itReportPath}</destFile> 
+						<dataFile>${sonar.jacoco.itReportPath}</dataFile> </configuration> </execution> -->
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 
 	<profiles>

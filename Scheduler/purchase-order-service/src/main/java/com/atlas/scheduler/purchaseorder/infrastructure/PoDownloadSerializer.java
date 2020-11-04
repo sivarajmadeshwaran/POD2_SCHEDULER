@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PoDownloadSerializer implements Serializer<PurchaseOrderDto> {
 
-	@Value("${po.download.payload.type}")
+	@Value("${po.download.serialized.payload.type}")
 	private String payloadType;
 	
 	public PoDownloadSerializer(String payloadType) {

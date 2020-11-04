@@ -2,14 +2,22 @@ package com.atlas.scheduler.purchaseorder.repository;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
-import javax.persistence.*;
-
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * The persistent class for the purchase_order database table.
@@ -17,13 +25,16 @@ import java.util.List;
  */
 @Entity
 @Table(name = "purchase_order")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded=true)
 public class PurchaseOrder implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "po_nbr")
+	@EqualsAndHashCode.Include
 	private int poNbr;
 
 	private String address;

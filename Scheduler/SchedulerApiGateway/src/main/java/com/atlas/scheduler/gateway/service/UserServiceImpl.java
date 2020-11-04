@@ -26,15 +26,16 @@ import com.atlas.scheduler.gateway.repository.Roles;
 import com.atlas.scheduler.gateway.repository.UserEntity;
 import com.atlas.scheduler.gateway.repository.UserRepository;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @author sivaraj Used to deal with User related operation
+ */
 @Service
-@Data
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
 
@@ -53,6 +54,12 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	AuthenticationManager authenticationManager;
 
+	/**
+	 * @author sivaraj Used to create the user
+	 * 
+	 * @param User    Details
+	 * @param Created User Details
+	 */
 	@Override
 	public UserDto createUser(UserDto userReq) {
 		userReq.setUserId(UUID.randomUUID().toString());
@@ -66,6 +73,13 @@ public class UserServiceImpl implements UserService {
 		return mapper.map(user, UserDto.class);
 	}
 
+	/**
+	 * 
+	 * Used to get the user details
+	 * 
+	 * @param User Id
+	 * @return UserDetails
+	 */
 	@Override
 	public UserDetail loadUserByUsername(String userId) {
 		UserEntity user = userRepo.findByUserId(userId);
@@ -74,7 +88,8 @@ public class UserServiceImpl implements UserService {
 		}
 		UserDetail userDetail = new UserDetail(user.getUserId(), user.getEncryptedPassword(), user.getRoles().stream()
 				.map(r -> new SimpleGrantedAuthority(r.getName().name())).collect(Collectors.toList()));
-		userDetail.setRoles(user.getRoles().stream().map(r ->  "ROLE_" + r.getName().name() ).collect(Collectors.joining(",")));
+		userDetail.setRoles(
+				user.getRoles().stream().map(r -> "ROLE_" + r.getName().name()).collect(Collectors.joining(",")));
 		return userDetail;
 	}
 
@@ -85,12 +100,10 @@ public class UserServiceImpl implements UserService {
 			userRoles.add(userRole);
 		} else {
 			roles.forEach(role -> {
-				switch (role) {
-				case "admin":
+				if ("admin".equalsIgnoreCase(role)) {
 					Roles adminRole = roleRepository.findByName(ERole.ADMIN);
 					userRoles.add(adminRole);
-					break;
-				default:
+				} else {
 					Roles userRole = roleRepository.findByName(ERole.USER);
 					userRoles.add(userRole);
 				}
@@ -99,6 +112,13 @@ public class UserServiceImpl implements UserService {
 		return userRoles;
 	}
 
+	/**
+	 * 
+	 * Used to Authenticate the user details with DB
+	 * 
+	 * @param User Details
+	 * @return JWT Token
+	 */
 	@Override
 	public String authenticate(UserDto userReq) throws InvalidCredentialsException {
 		try {

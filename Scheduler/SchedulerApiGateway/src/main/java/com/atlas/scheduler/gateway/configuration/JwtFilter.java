@@ -15,6 +15,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/**
+ * @author sivaraj
+ * This is a filter used to validate JWT Token for Authorization
+ * 
+ */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -26,9 +31,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
 	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
 		final String authorizationHeader = request.getHeader("Authorization");
-		if (authorizationHeader == null) {
-			return null;
-		}
 		String token = authorizationHeader.replace(headerPrefix, "");
 		String userId = jwtUtils.extractUsername(token);
 		

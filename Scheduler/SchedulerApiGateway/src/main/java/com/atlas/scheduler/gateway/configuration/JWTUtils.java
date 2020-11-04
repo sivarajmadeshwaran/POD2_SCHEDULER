@@ -13,6 +13,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+/**
+ * @author sivaraj
+ *  Utility to deal with JWT creation & validity check
+ */
 @Component
 public class JWTUtils {
 

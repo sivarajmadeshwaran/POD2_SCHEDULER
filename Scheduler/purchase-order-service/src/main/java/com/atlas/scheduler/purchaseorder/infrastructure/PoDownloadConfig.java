@@ -15,7 +15,6 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties.AckMode;
-import org.springframework.kafka.listener.LoggingErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
@@ -23,7 +22,6 @@ import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 
 import com.atlas.scheduler.purchaseorder.datatransfer.PurchaseOrderDto;
-import com.atlas.scheduler.purchaseorder.infrastructure.PoDeserializerFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -73,10 +71,8 @@ public class PoDownloadConfig {
 		ConcurrentKafkaListenerContainerFactory<Integer, PurchaseOrderDto> poDownloadfactory = new ConcurrentKafkaListenerContainerFactory<>();
 		poDownloadfactory.setConsumerFactory(poConsumerFactory());
 		poDownloadfactory.getContainerProperties().setAckMode(AckMode.RECORD);
-		poDownloadfactory.setErrorHandler((exception, data) -> {
-			log.error("Error in processing po download message with Exception {} and the record is {}", exception,
-					data);
-		});
+		poDownloadfactory.setErrorHandler((exception, data) -> log.error(
+				"Error in processing po download message with Exception {} and the record is {}", exception, data));
 		return poDownloadfactory;
 	}
 
@@ -106,7 +102,7 @@ public class PoDownloadConfig {
 		fixedBackOffPolicy.setBackOffPeriod(10000);
 		retryTemplate.setBackOffPolicy(fixedBackOffPolicy);
 		SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
-		retryPolicy.setMaxAttempts(4);
+		retryPolicy.setMaxAttempts(2);
 		retryTemplate.setRetryPolicy(retryPolicy);
 		return retryTemplate;
 	}

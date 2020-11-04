@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import com.atlas.scheduler.purchaseorder.datatransfer.PurchaseOrderDto;
@@ -30,19 +30,16 @@ class PurchaseOrderServiceImplTest {
 
 	@Mock
 	PurchaseOrderRepository repo;
-
+	
 	PurchaseOrderServiceImpl service = null;
-
 	List<PurchaseOrder> pos = null;
 	PurchaseOrderDto orderDto = null;
 	PurchaseOrder order = null;
-	@Mock
-    private PurchaseOrder mockCustomOrder;
 
 	@BeforeEach
 	public void setUp() {
 		Date now = new Date();
-		
+
 		MockitoAnnotations.initMocks(this);
 		service = new PurchaseOrderServiceImpl();
 		service.setPurchaseOrderRepo(repo);
@@ -59,7 +56,7 @@ class PurchaseOrderServiceImplTest {
 		line.setOrderedQty(10);
 		line.setUpcNbr(100011);
 		List<PurchaseOrderLine> lineEntities = new ArrayList<>();
-		
+
 		order.setPurchaseOrderLines(lineEntities);
 		order.setCreatedTimestamp(LocalDateTime.now());
 		order.setLastUpdatedTimestamp(order.getCreatedTimestamp());
@@ -119,8 +116,11 @@ class PurchaseOrderServiceImplTest {
 	void testCreatePurchaseOrder() throws BusinessException {
 		when(repo.save(pos.get(0))).thenReturn(pos.get(0));
 		service.createPurchaseOrder(orderDto);
+		Optional<PurchaseOrder> ord = Optional.of(pos.get(0));
+		when(repo.findById(11)).thenReturn(ord);
+		assertEquals(11,ord.get().getPoNbr());
 	}
-	
+
 	@DisplayName("Exception scenario while persisting  Purchase Order")
 	@Test
 	void testCreatePurchaseOrderException() throws BusinessException {
