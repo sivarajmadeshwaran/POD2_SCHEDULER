@@ -202,6 +202,49 @@ CREATE TABLE IF NOT EXISTS `scheduler`.`purchase_order_line` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
+               
+               -- -----------------------------------------------------
+-- Table `scheduler`.`roles`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `scheduler`.`roles` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `scheduler`.`users`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `scheduler`.`users` (
+  `user_id` VARCHAR(100) NOT NULL,
+  `first_name` VARCHAR(45) NULL DEFAULT NULL,
+  `last_name` VARCHAR(45) NULL DEFAULT NULL,
+  `password` VARCHAR(200) NOT NULL,
+  PRIMARY KEY (`user_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `scheduler`.`user_roles`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `scheduler`.`user_roles` (
+  `user_id` VARCHAR(100) NOT NULL,
+  `role_id` INT(11) NOT NULL,
+  PRIMARY KEY (`user_id`, `role_id`),
+  INDEX `FK_role_idx` (`role_id` ASC) VISIBLE,
+  CONSTRAINT `FK_role`
+    FOREIGN KEY (`role_id`)
+    REFERENCES `scheduler`.`roles` (`id`),
+  CONSTRAINT `FK_userRef`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `scheduler`.`users` (`user_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

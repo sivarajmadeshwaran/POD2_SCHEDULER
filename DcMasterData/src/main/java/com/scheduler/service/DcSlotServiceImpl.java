@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.scheduler.Repository.DcSlotRepository;
 import com.scheduler.entity.DcSlot;
+import com.scheduler.exception.ResourceNotFoundException;
 
 /**
  * This is for DcSlot Domain Business Implementation
@@ -35,5 +36,6 @@ public class DcSlotServiceImpl implements DcSlotService{
 	public Object getDcSlots() {
 		return dcSlotRepository.findAll();
 	}
+
 
 }

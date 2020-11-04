@@ -1,4 +1,0 @@
-kafka:
-  topic: appointment-kafka
-  bootstrap-server: localhost:9092
-

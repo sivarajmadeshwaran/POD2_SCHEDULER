@@ -1,53 +1,34 @@
 CREATE TABLE `appointment` (
-  `appointment_id` int(10) NOT NULL AUTO_INCREMENT,
-  `booking_slot_id` int(11) NOT NULL,
+  `appointment_id` int NOT NULL AUTO_INCREMENT,
+  `booking_slot_id` int NOT NULL,
   `appt_date` date NOT NULL,
-  `dc_nbr` int(11) NOT NULL,
+  `dc_nbr` int NOT NULL,
   `created_timestamp` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
   `last_updated_timestamp` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `truck_nbr` int(10) unsigned NOT NULL,
-  `qty` int(11) NOT NULL,
+  `truck_nbr` int unsigned NOT NULL,
+  `qty` int NOT NULL,
   `obsolete_indicator` varchar(1) NOT NULL DEFAULT 'N',
-  `appt_status_id` int(11) NOT NULL,
+  `appt_status_id` int NOT NULL,
   PRIMARY KEY (`appointment_id`),
   KEY `FK_DC_Reference_idx` (`dc_nbr`),
   KEY `FK_DC_Slot_idx` (`booking_slot_id`),
   KEY `FK_TruckNbr_idx` (`truck_nbr`),
-  CONSTRAINT `FK_DCNbr` FOREIGN KEY (`dc_nbr`) REFERENCES `dc` (`dc_nbr`),
   CONSTRAINT `FK_DC_Slot` FOREIGN KEY (`booking_slot_id`) REFERENCES `dc_slot` (`id`),
+  CONSTRAINT `FK_DCNbr` FOREIGN KEY (`dc_nbr`) REFERENCES `dc` (`dc_nbr`),
   CONSTRAINT `FK_TruckNbr` FOREIGN KEY (`truck_nbr`) REFERENCES `truck` (`truck_nbr`)
-) ENGINE=InnoDB AUTO_INCREMENT=189 DEFAULT CHARSET=utf8;
-
-
+) ENGINE=InnoDB AUTO_INCREMENT=190 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `appointment_po` (
-  `appointment_id` int(11) NOT NULL,
-  `po_nbr` int(11) NOT NULL,
+  `appointment_id` int NOT NULL,
+  `po_nbr` int NOT NULL,
   PRIMARY KEY (`appointment_id`,`po_nbr`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-
-
-CREATE TABLE `dc_slot` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `dc_nbr` int(11) NOT NULL,
-  `booking_slot` varchar(45) NOT NULL,
-  `created_timestamp` datetime NOT NULL,
-  `last_updated_timestamp` datetime NOT NULL,
-  `max_truck_count` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `FK_dc_Reference` (`dc_nbr`),
-  CONSTRAINT `FK_dc_Reference` FOREIGN KEY (`dc_nbr`) REFERENCES `dc` (`dc_nbr`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-
-
-
 CREATE TABLE `dc` (
-  `dc_nbr` int(11) NOT NULL,
+  `dc_nbr` int NOT NULL,
   `city` varchar(45) DEFAULT NULL,
-  `dc_type` int(10) unsigned NOT NULL,
+  `dc_type` int unsigned NOT NULL,
   `created_timestamp` datetime NOT NULL,
   `last_updated_timestamp` datetime NOT NULL,
   PRIMARY KEY (`dc_nbr`),
@@ -55,31 +36,88 @@ CREATE TABLE `dc` (
   CONSTRAINT `FK_dc_type` FOREIGN KEY (`dc_type`) REFERENCES `dc_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `dc_slot` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `dc_nbr` int NOT NULL,
+  `booking_slot` varchar(45) NOT NULL,
+  `created_timestamp` datetime NOT NULL,
+  `last_updated_timestamp` datetime NOT NULL,
+  `max_truck_count` int DEFAULT NULL,
+  `obsolete_indicator` char(1) NOT NULL DEFAULT 'N',
+  PRIMARY KEY (`dc_nbr`,`booking_slot`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  CONSTRAINT `FK_dc_Reference` FOREIGN KEY (`dc_nbr`) REFERENCES `dc` (`dc_nbr`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 CREATE TABLE `dc_type` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `type_description` varchar(45) NOT NULL,
   `created_timestamp` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `hibernate_sequence` (
-  `next_val` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `next_val` bigint DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
-
-
-INSERT INTO scheduler.hibernate_sequence (next_val) VALUES (0);
-
-CREATE TABLE `truck` (
-  `truck_nbr` int(10) unsigned NOT NULL,
-  `truck_type` int(10) unsigned NOT NULL,
+CREATE TABLE `purchase_order` (
+  `po_nbr` int unsigned NOT NULL,
+  `vendor_nbr` int unsigned DEFAULT NULL,
+  `po_date` date DEFAULT NULL,
+  `address` varchar(45) DEFAULT NULL,
   `created_timestamp` datetime NOT NULL,
   `last_updated_timestamp` datetime NOT NULL,
+  PRIMARY KEY (`po_nbr`),
+  KEY `FK_vendor_idx` (`vendor_nbr`),
+  CONSTRAINT `FK_vendor` FOREIGN KEY (`vendor_nbr`) REFERENCES `vendor` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+CREATE TABLE `purchase_order_line` (
+  `po_nbr` int unsigned NOT NULL,
+  `po_line_nbr` int unsigned NOT NULL,
+  `upc_nbr` int unsigned NOT NULL,
+  `item_description` varchar(100) DEFAULT NULL,
+  `ordered_qty` int unsigned NOT NULL,
+  `created_timestamp` datetime NOT NULL,
+  `last_updated_timestamp` datetime NOT NULL,
+  PRIMARY KEY (`po_nbr`,`po_line_nbr`),
+  CONSTRAINT `FK_PurchaseOrder` FOREIGN KEY (`po_nbr`) REFERENCES `purchase_order` (`po_nbr`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `truck` (
+  `truck_nbr` int unsigned NOT NULL,
+  `truck_type` int NOT NULL,
+  `created_timestamp` datetime NOT NULL,
+  `last_updated_timestamp` datetime NOT NULL,
+  `truck_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`truck_nbr`),
   KEY `FK_truck_type_idx` (`truck_type`),
   CONSTRAINT `FK_truck_type` FOREIGN KEY (`truck_type`) REFERENCES `truck_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `truck_type` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `tuck_type` varchar(50) DEFAULT NULL,
+  `created_timestamp` datetime DEFAULT NULL,
+  `type_description` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `vendor` (
+  `id` int unsigned NOT NULL,
+  `name` varchar(45) NOT NULL,
+  `phone_nbr` int unsigned DEFAULT NULL,
+  `email` varchar(45) DEFAULT NULL,
+  `address` varchar(100) DEFAULT NULL,
+  `created_timestamp` datetime NOT NULL,
+  `last_updated_timestamp` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+
+
